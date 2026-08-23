@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ajay K — Developer</title>
+<meta name="description" content="Developer portfolio — building fast, resilient software for the web." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128187;</text></svg>" />
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor-glow" aria-hidden="true"></div>
+<div class="scroll-progress" aria-hidden="true"><span id="scrollBar"></span></div>
+
+<!-- ===== NAV ===== -->
+<header class="nav" id="nav">
+  <a class="nav__brand" href="#top">
+    <span class="nav__logo">AK</span>
+    <span class="nav__brandtext">ajay<span class="accent">.</span>dev</span>
+  </a>
+  <nav class="nav__links" id="navLinks" aria-label="Primary">
+    <a href="#about"><span class="nav__num">01</span> about</a>
+    <a href="#stack"><span class="nav__num">02</span> stack</a>
+    <a href="#work"><span class="nav__num">03</span> work</a>
+    <a href="#path"><span class="nav__num">04</span> path</a>
+    <a class="nav__cta" href="#contact">contact</a>
+  </nav>
+  <button class="nav__burger" id="burger" aria-label="Toggle menu" aria-expanded="false">
+    <span></span><span></span>
+  </button>
+</header>
+
+<main id="top">
+
+  <!-- ===== HERO / SCROLL-SCRUBBED VIDEO ===== -->
+  <section class="hero" id="hero">
+    <div class="hero__sticky">
+
+      <div class="hero__media">
+        <video
+          id="scrubVideo"
+          class="hero__video"
+          src="assets/AK.mp4"
+          muted
+          playsinline
+          webkit-playsinline
+          preload="auto"
+          disablepictureinpicture
+          aria-hidden="true"></video>
+        <div class="hero__vignette" aria-hidden="true"></div>
+        <div class="hero__scanlines" aria-hidden="true"></div>
+      </div>
+
+      <div class="hero__loader" id="heroLoader">
+        <div class="hero__loaderbar"><span id="heroLoaderFill"></span></div>
+        <p class="hero__loadertext"><span id="heroLoaderPct">0</span>% — buffering frames</p>
+      </div>
+
+      <div class="hero__overlay">
+        <div class="hero__stage" data-stage="0">
+          <p class="hero__kicker"><span class="dot"></span> available for work</p>
+          <h1 class="hero__title">
+            <span class="line"><span>AJAY</span></span>
+            <span class="line"><span>KUMAR</span></span>
+          </h1>
+          <p class="hero__role"><span class="accent">&lt;</span>&nbsp;developer&nbsp;<span class="accent">/&gt;</span></p>
+        </div>
+        <div class="hero__stage" data-stage="1">
+          <p class="hero__big">I build things<br />that <em>ship</em>.</p>
+        </div>
+        <div class="hero__stage" data-stage="2">
+          <p class="hero__big">Frontend craft.<br />Backend <em>discipline</em>.</p>
+        </div>
+      </div>
+
+      <div class="hero__hud" aria-hidden="true">
+        <div class="hud__group">
+          <span class="hud__label">frame</span>
+          <span class="hud__val" id="hudFrame">000</span><span class="hud__dim">/240</span>
+        </div>
+        <div class="hud__group">
+          <span class="hud__label">progress</span>
+          <span class="hud__val" id="hudPct">00</span><span class="hud__dim">%</span>
+        </div>
+      </div>
+
+      <div class="hero__scrollhint" id="scrollHint">
+        <span>scroll</span>
+        <div class="hero__mouse"><i></i></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== MARQUEE ===== -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee__inner">
+      <span>TypeScript &#10022; React &#10022; Node.js &#10022; Next.js &#10022; PostgreSQL &#10022; Docker &#10022; Python &#10022; AWS &#10022; Tailwind &#10022; Redis &#10022; GraphQL &#10022; Go &#10022;&nbsp;</span>
+      <span>TypeScript &#10022; React &#10022; Node.js &#10022; Next.js &#10022; PostgreSQL &#10022; Docker &#10022; Python &#10022; AWS &#10022; Tailwind &#10022; Redis &#10022; GraphQL &#10022; Go &#10022;&nbsp;</span>
+    </div>
+  </div>
+
+  <!-- ===== ABOUT ===== -->
+  <section class="section" id="about">
+    <div class="wrap wrap--split">
+      <div class="col-left">
+        <p class="eyebrow reveal"><span class="eyebrow__num">01</span> about</p>
+        <h2 class="h2 reveal">Engineer first,<br />pixel-pusher second.</h2>
+      </div>
+      <div class="col-right">
+        <div class="terminal reveal">
+          <div class="terminal__bar">
+            <i class="tdot tdot--r"></i><i class="tdot tdot--y"></i><i class="tdot tdot--g"></i>
+            <span class="terminal__name">~/about/ajay.ts</span>
+          </div>
+          <pre class="terminal__body"><code><span class="c-key">const</span> <span class="c-var">ajay</span> <span class="c-op">=</span> {
+  <span class="c-prop">role</span>: <span class="c-str">"Full-stack Developer"</span>,
+  <span class="c-prop">based</span>: <span class="c-str">"India"</span>,
+  <span class="c-prop">focus</span>: [<span class="c-str">"web performance"</span>, <span class="c-str">"DX"</span>],
+  <span class="c-prop">obsessions</span>: [<span class="c-str">"type safety"</span>, <span class="c-str">"60fps"</span>],
+  <span class="c-prop">currently</span>: <span class="c-str">"shipping side projects"</span>,
+};</code></pre>
+        </div>
+        <p class="lead reveal">
+          I&rsquo;m a developer who cares about the parts users never see &mdash; the query
+          that got 40&times; faster, the bundle that lost 300&nbsp;kB, the deploy that
+          stopped waking people up at 3&nbsp;a.m. I like turning fuzzy problems into
+          small, boring, reliable systems.
+        </p>
+        <p class="lead reveal">
+          Comfortable across the stack: React and TypeScript on the front, Node and
+          Postgres behind it, containers and CI holding it all together.
+        </p>
+        <div class="stats reveal">
+          <div class="stat"><b data-count="4">0</b><span>years building</span></div>
+          <div class="stat"><b data-count="30">0</b><span>projects shipped</span></div>
+          <div class="stat"><b data-count="12">0</b><span>OSS contributions</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== STACK ===== -->
+  <section class="section section--alt" id="stack">
+    <div class="wrap">
+      <p class="eyebrow reveal"><span class="eyebrow__num">02</span> stack</p>
+      <h2 class="h2 reveal">Tools I reach for.</h2>
+      <div class="stack-grid">
+        <article class="card reveal">
+          <div class="card__ico">{ }</div>
+          <h3>Frontend</h3>
+          <p>Interfaces that stay fast on a mid-range phone, not just on my laptop.</p>
+          <ul class="tags">
+            <li>React</li><li>Next.js</li><li>TypeScript</li><li>Tailwind</li><li>Vite</li><li>GSAP</li>
+          </ul>
+        </article>
+        <article class="card reveal">
+          <div class="card__ico">&lt;/&gt;</div>
+          <h3>Backend</h3>
+          <p>APIs with clear contracts, sane errors, and boring, predictable behaviour.</p>
+          <ul class="tags">
+            <li>Node.js</li><li>Express</li><li>Python</li><li>PostgreSQL</li><li>Redis</li><li>GraphQL</li>
+          </ul>
+        </article>
+        <article class="card reveal">
+          <div class="card__ico">&#9650;</div>
+          <h3>Infra &amp; Tooling</h3>
+          <p>Repeatable builds, short feedback loops, deploys that are non-events.</p>
+          <ul class="tags">
+            <li>Docker</li><li>GitHub Actions</li><li>AWS</li><li>Vercel</li><li>Nginx</li><li>Linux</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== WORK ===== -->
+  <section class="section" id="work">
+    <div class="wrap">
+      <p class="eyebrow reveal"><span class="eyebrow__num">03</span> work</p>
+      <h2 class="h2 reveal">Selected projects.</h2>
+
+      <div class="projects">
+        <article class="project reveal">
+          <div class="project__idx">01</div>
+          <div class="project__body">
+            <h3 class="project__title">Nebula Analytics</h3>
+            <p class="project__desc">
+              Real-time event dashboard handling ~2M events/day. Streaming ingest,
+              rollup tables, and a UI that renders 50k points without dropping frames.
+            </p>
+            <ul class="tags tags--sm"><li>Next.js</li><li>Node</li><li>Postgres</li><li>Redis</li></ul>
+          </div>
+          <div class="project__links">
+            <a href="#" class="ilink">live <span>&#8599;</span></a>
+            <a href="#" class="ilink">code <span>&#8599;</span></a>
+          </div>
+        </article>
+
+        <article class="project reveal">
+          <div class="project__idx">02</div>
+          <div class="project__body">
+            <h3 class="project__title">Forge CLI</h3>
+            <p class="project__desc">
+              A zero-config scaffolding tool for TypeScript services. Generates the
+              repo, CI, Docker setup and health checks in one command.
+            </p>
+            <ul class="tags tags--sm"><li>TypeScript</li><li>Go</li><li>Docker</li></ul>
+          </div>
+          <div class="project__links">
+            <a href="#" class="ilink">live <span>&#8599;</span></a>
+            <a href="#" class="ilink">code <span>&#8599;</span></a>
+          </div>
+        </article>
+
+        <article class="project reveal">
+          <div class="project__idx">03</div>
+          <div class="project__body">
+            <h3 class="project__title">Driftwood</h3>
+            <p class="project__desc">
+              Collaborative markdown editor with CRDT sync and offline-first storage.
+              Conflict-free edits across tabs, devices and flaky connections.
+            </p>
+            <ul class="tags tags--sm"><li>React</li><li>WebSockets</li><li>IndexedDB</li></ul>
+          </div>
+          <div class="project__links">
+            <a href="#" class="ilink">live <span>&#8599;</span></a>
+            <a href="#" class="ilink">code <span>&#8599;</span></a>
+          </div>
+        </article>
+
+        <article class="project reveal">
+          <div class="project__idx">04</div>
+          <div class="project__body">
+            <h3 class="project__title">Pulse Monitor</h3>
+            <p class="project__desc">
+              Self-hosted uptime monitoring with alert routing. Sub-second checks,
+              incident timelines, and a status page you can hand to customers.
+            </p>
+            <ul class="tags tags--sm"><li>Python</li><li>FastAPI</li><li>AWS</li></ul>
+          </div>
+          <div class="project__links">
+            <a href="#" class="ilink">live <span>&#8599;</span></a>
+            <a href="#" class="ilink">code <span>&#8599;</span></a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PATH / TIMELINE ===== -->
+  <section class="section section--alt" id="path">
+    <div class="wrap">
+      <p class="eyebrow reveal"><span class="eyebrow__num">04</span> path</p>
+      <h2 class="h2 reveal">How I got here.</h2>
+      <ol class="timeline">
+        <li class="tl reveal">
+          <span class="tl__year">2024 &mdash; now</span>
+          <h3>Full-stack Developer</h3>
+          <p>Owning features end to end: schema, API, UI, and the dashboards that prove it works.</p>
+        </li>
+        <li class="tl reveal">
+          <span class="tl__year">2023</span>
+          <h3>Frontend Developer</h3>
+          <p>Rebuilt a legacy dashboard in React; cut time-to-interactive from 6.2s to 1.4s.</p>
+        </li>
+        <li class="tl reveal">
+          <span class="tl__year">2022</span>
+          <h3>Freelance &amp; Open Source</h3>
+          <p>Shipped client sites and started contributing patches to tools I use daily.</p>
+        </li>
+        <li class="tl reveal">
+          <span class="tl__year">2021</span>
+          <h3>First lines of code</h3>
+          <p>Started with Python scripts, got hooked on making the browser do things it shouldn&rsquo;t.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ===== CONTACT ===== -->
+  <section class="section section--contact" id="contact">
+    <div class="wrap wrap--center">
+      <p class="eyebrow reveal"><span class="eyebrow__num">05</span> contact</p>
+      <h2 class="h2 h2--xl reveal">Let&rsquo;s build<br />something.</h2>
+      <p class="lead lead--center reveal">
+        Open to full-time roles, freelance work, and interesting problems.
+        Fastest way to reach me is email.
+      </p>
+      <a class="bigmail reveal" href="mailto:ajayak15012004@gmail.com">ajayak15012004@gmail.com</a>
+      <div class="socials reveal">
+        <a href="#" class="ilink">GitHub <span>&#8599;</span></a>
+        <a href="#" class="ilink">LinkedIn <span>&#8599;</span></a>
+        <a href="#" class="ilink">X <span>&#8599;</span></a>
+        <a href="#" class="ilink">R&eacute;sum&eacute; <span>&#8599;</span></a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <span>&copy; <span id="year">2026</span> Ajay K</span>
+  <span class="footer__mid">built from scratch &mdash; no frameworks</span>
+  <a href="#top" class="footer__top">back to top &#8593;</a>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>
