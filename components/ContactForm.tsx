@@ -21,6 +21,7 @@ export default function ContactForm() {
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [errorDetail, setErrorDetail] = useState("");
+  const [sentName, setSentName] = useState("");
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -45,6 +46,7 @@ export default function ContactForm() {
 
       if (res.ok) {
         setStatus("sent");
+        setSentName(name.trim());
         setName("");
         setEmail("");
         setPhone("");
@@ -67,7 +69,7 @@ export default function ContactForm() {
     return (
       <div className="cform cform--sent">
         <p className="cform__sent">
-          Message sent — thanks, {name || "I"}&rsquo;ll get back to you soon.
+          Message sent — thanks, {sentName || "I"}&rsquo;ll get back to you soon.
         </p>
       </div>
     );
