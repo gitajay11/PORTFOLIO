@@ -39,13 +39,44 @@ const WATERMARK = { x: 1136, y: 576, w: 48, h: 48 };
 const PATCH_BLEED = 6; // safe — surroundings are pure black for 24px
 
 /**
- * object-position of the video, as fractions. Y is pinned to the TOP so that
- * when the viewport is wider than 16:9 the overflow is cropped off the bottom
- * of the frame instead of the top — the subject's head has only ~26px of
- * headroom in the source, so a centred crop decapitates him on wide screens.
+ * Subject geometry, measured from the union silhouette across all frames.
+ *  - SUBJ_CX      horizontal centre of the head.
+ *  - SUBJ_EDGE_X  a conservative left edge of the body: the silhouette stays
+ *                 right of this down to roughly collar level, so it is what
+ *                 the hero text column is allowed to butt up against.
+ * The frame's leftmost columns are black at every row (the silhouette never
+ * reaches x < 162), which is what makes sliding the video sideways seamless:
+ * the strip it uncovers is page-black meeting video-black.
  */
-const OBJECT_POS_X = 0.5;
-const OBJECT_POS_Y = 0;
+const SUBJ_CX = 645;
+const SUBJ_EDGE_X = 300;
+/** Bottom of the head in source px — the line the stacked hero must clear. */
+const FACE_BOTTOM_Y = 420;
+
+/**
+ * Where the subject's centre should sit, as a fraction of viewport width.
+ * On desktop he is pushed right so the name has a clear column beside him;
+ * on narrow screens he stays centred and the name sits below, as before.
+ */
+const SUBJ_TARGET_WIDE = 0.7;
+const SUBJ_TARGET_NARROW = 0.5;
+const WIDE_QUERY = "(min-width: 900px)";
+
+/**
+ * The side-by-side hero is only used when the column beside the subject can
+ * actually hold the name. A fixed breakpoint is not enough: the subject is
+ * scaled to cover, so a tall or near-square viewport enlarges him and squeezes
+ * the column even at a generous width. These mirror the CSS so the viability
+ * test matches what will really be rendered.
+ */
+const heroPadFor = (cw: number) => Math.min(56, Math.max(20, cw * 0.05));
+const titlePxFor = (cw: number) => Math.min(118.4, Math.max(48, cw * 0.074));
+const COLUMN_GAP = 32;
+/** "KUMAR" measures ~3.3em at the hero's weight and tracking. */
+const TITLE_EM_WIDTH = 3.35;
+
+/** Matches --video-top-inset in globals.css: clamp(20px, 5.5vh, 68px). */
+const topInsetFor = (h: number) => Math.min(68, Math.max(20, h * 0.055));
 
 export default function ScrollVideoBackground() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -204,33 +235,82 @@ export default function ScrollVideoBackground() {
       const layer = layerRef.current;
       const video = videoRef.current;
       const patch = patchRef.current;
-      if (!layer || !video || !patch) return;
+      if (!layer || !video) return;
 
-      // Measure the video's own box, not the layer's — the video is inset from
-      // the top, so the two differ and the cover maths must use the real box.
-      const layerBox = layer.getBoundingClientRect();
-      const videoBox = video.getBoundingClientRect();
-      const cw = videoBox.width;
-      const ch = videoBox.height;
-      if (!cw || !ch) return;
+      const cw = layer.clientWidth;
+      const chFull = layer.clientHeight;
+      if (!cw || !chFull) return;
 
-      // object-fit: cover, within the video box
-      const scale = Math.max(cw / NAT_W, ch / NAT_H);
-      const offsetX = videoBox.left - layerBox.left + (cw - NAT_W * scale) * OBJECT_POS_X;
-      const offsetY = videoBox.top - layerBox.top + (ch - NAT_H * scale) * OBJECT_POS_Y;
+      const inset = topInsetFor(chFull);
+      // Cover the area below the inset, preserving aspect.
+      const scale = Math.max(cw / NAT_W, (chFull - inset) / NAT_H);
+      const renderedW = NAT_W * scale;
+      const renderedH = NAT_H * scale;
 
-      patch.style.left = `${offsetX + (WATERMARK.x - PATCH_BLEED) * scale}px`;
-      patch.style.top = `${offsetY + (WATERMARK.y - PATCH_BLEED) * scale}px`;
-      patch.style.width = `${(WATERMARK.w + PATCH_BLEED * 2) * scale}px`;
-      patch.style.height = `${(WATERMARK.h + PATCH_BLEED * 2) * scale}px`;
+      // Would the side-by-side hero actually fit? Try it, measure the column
+      // it would leave, and fall back to the stacked layout if it is too tight.
+      const minLeft = cw - renderedW;
+      const sideLeft = Math.max(SUBJ_TARGET_WIDE * cw - SUBJ_CX * scale, minLeft);
+      const sideColumn =
+        sideLeft + SUBJ_EDGE_X * scale - heroPadFor(cw) - COLUMN_GAP;
+      const useSide =
+        window.matchMedia(WIDE_QUERY).matches &&
+        sideColumn >= titlePxFor(cw) * TITLE_EM_WIDTH;
+
+      const target = (useSide ? SUBJ_TARGET_WIDE : SUBJ_TARGET_NARROW) * cw;
+
+      // Place the subject at the target, then guarantee the right edge stays
+      // covered. Uncovering the LEFT is fine — that strip is black either way.
+      let left = target - SUBJ_CX * scale;
+      left = Math.max(left, minLeft);
+      if (!useSide) left = Math.min(left, 0);
+
+      document.documentElement.dataset.heroLayout = useSide ? "side" : "stacked";
+
+      // Drive the element geometry directly rather than leaning on object-fit,
+      // so the horizontal offset can't turn into a mid-body crop.
+      video.style.left = `${left}px`;
+      video.style.top = `${inset}px`;
+      video.style.width = `${renderedW}px`;
+      video.style.height = `${renderedH}px`;
+
+      // Hand the hero the two lines it needs to stay clear of: the column
+      // beside the subject, and the bottom of his head.
+      const root = document.documentElement.style;
+      root.setProperty("--subject-left", `${Math.round(left + SUBJ_EDGE_X * scale)}px`);
+      root.setProperty("--face-bottom", `${Math.round(inset + FACE_BOTTOM_Y * scale)}px`);
+
+      if (patch) {
+        patch.style.left = `${left + (WATERMARK.x - PATCH_BLEED) * scale}px`;
+        patch.style.top = `${inset + (WATERMARK.y - PATCH_BLEED) * scale}px`;
+        patch.style.width = `${(WATERMARK.w + PATCH_BLEED * 2) * scale}px`;
+        patch.style.height = `${(WATERMARK.h + PATCH_BLEED * 2) * scale}px`;
+      }
     };
 
     layout();
+
+    // A ResizeObserver on the layer is the reliable trigger: it fires for any
+    // change to the element's box, including ones that never raise a window
+    // "resize" event (scrollbar appearing, viewport emulation, split panes).
+    let observer: ResizeObserver | undefined;
+    if (typeof ResizeObserver !== "undefined" && layerRef.current) {
+      observer = new ResizeObserver(layout);
+      observer.observe(layerRef.current);
+    }
     window.addEventListener("resize", layout);
     window.addEventListener("orientationchange", layout);
+
+    // Crossing the desktop/mobile breakpoint swaps the subject's target
+    // position even when the layer's box happens not to change.
+    const mq = window.matchMedia(WIDE_QUERY);
+    mq.addEventListener("change", layout);
+
     return () => {
+      observer?.disconnect();
       window.removeEventListener("resize", layout);
       window.removeEventListener("orientationchange", layout);
+      mq.removeEventListener("change", layout);
     };
   }, []);
 

@@ -107,6 +107,48 @@ two things had to change:
 
 Together these take head clearance from ~4px to ~50px on a typical desktop.
 
+### Hero layout: keeping the face clear
+
+A centred portrait and centred type compete for the same space, so on wide
+viewports the name landed across the jaw. The hero now picks one of two
+layouts, and the choice is made in JS rather than by a media query because a
+fixed breakpoint is not enough — the subject is scaled to cover, so a tall or
+near-square viewport enlarges him and squeezes the text column even at a
+generous width.
+
+- **side** — the video is offset so the subject sits at 70% of the width and
+  the name takes the clear column beside him. Used whenever that column can
+  actually hold the title.
+- **stacked** — subject centred, name below him. The fallback, and what
+  mobile always gets.
+
+`ScrollVideoBackground` publishes two custom properties that the hero CSS
+keys off, both recomputed on every resize:
+
+| Property | Meaning |
+| --- | --- |
+| `--subject-left` | Screen x of the body silhouette; caps the text column. |
+| `--face-bottom` | Screen y of the bottom of the head; floors the text. |
+
+The stacked hero uses `margin-top: auto` on the inner block rather than
+`justify-content: flex-end`. The auto margin pushes the text down when there
+is room but collapses to 0 when there is not, so a squeezed hero grows
+downward instead of overflowing upward across the face.
+
+Two things this depends on:
+
+1. The video is sized in JS, so it needs `max-width: none` — the global reset
+   caps media at `max-width: 100%`, which silently re-cropped the frame and
+   undid the horizontal offset.
+2. Offsetting the video sideways is only seamless because the source frame is
+   black down its left edge (the silhouette never reaches x < 162), so the
+   strip it uncovers is page-black meeting video-black. Narrowing the video
+   instead would crop mid-body and leave a visible vertical seam.
+
+Verified by mapping the rendered text box back into source coordinates and
+testing it against the head box at 375x812 through 2560x1080 — no intersection
+at any size.
+
 ### Readability over footage
 
 Since content scrolls over a moving video, a fixed scrim ramps from `0.42`

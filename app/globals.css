@@ -127,6 +127,10 @@ ol {
   left: 0;
   width: 100%;
   height: calc(100% - var(--video-top-inset));
+  /* The reset caps media at max-width:100%; this layer is sized in JS and
+     must be free to exceed the viewport, otherwise cover re-crops it and
+     silently undoes the horizontal offset. */
+  max-width: none;
   object-fit: cover;
   /* Pin to the top: on viewports wider than 16:9 the overflow is cropped off
      the bottom instead of the top, so the head is never clipped. */
@@ -404,14 +408,22 @@ ol {
   min-height: 100svh;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  /* flex-start + margin-top:auto on the child, rather than flex-end: the auto
+     margin pushes the text to the bottom when there is room, but collapses to
+     0 when there isn't — so a squeezed hero grows downward instead of
+     overflowing upward across the face. */
+  justify-content: flex-start;
   align-items: center;
   text-align: center;
-  padding: 0 24px calc(120px + 5vh);
+  /* --face-bottom is published by ScrollVideoBackground and tracks the bottom
+     of the head at the current viewport, so the copy can never ride up over
+     the face however the video is scaled. */
+  padding: calc(var(--face-bottom, 0px) + 14px) 24px clamp(48px, 8vh, 150px);
 }
 .hero__inner {
   display: grid;
   justify-items: center;
+  margin-top: auto;
 }
 
 .hero__kicker {
@@ -538,6 +550,30 @@ ol {
     transform: translateY(0);
     opacity: 0;
   }
+}
+
+/* Desktop: the subject is offset right by the video layer, so the hero
+   text takes the clear column beside him. --subject-left is published by
+   ScrollVideoBackground and tracks the silhouette at every viewport size. */
+:root[data-hero-layout="side"] .hero {
+  justify-content: center;
+  align-items: flex-start;
+  text-align: left;
+  padding: 0 clamp(20px, 5vw, 56px);
+}
+:root[data-hero-layout="side"] .hero__inner {
+  justify-items: start;
+  /* auto would beat justify-content: center and drop the block to the bottom */
+  margin-top: 0;
+  max-width: calc(var(--subject-left, 60vw) - clamp(20px, 5vw, 56px) - 32px);
+}
+:root[data-hero-layout="side"] .hero__title {
+  font-size: clamp(3rem, 7.4vw, 7.4rem);
+}
+:root[data-hero-layout="side"] .scrollhint {
+  left: clamp(20px, 5vw, 56px);
+  transform: none;
+  justify-items: start;
 }
 
 /* =========================================================
