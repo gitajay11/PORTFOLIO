@@ -776,6 +776,15 @@ ol {
 .chero__heading--right {
   text-align: right;
 }
+/* Mobile only: this variant sits in normal flow just below .mvid instead of
+   overlaid on the video (see ContactHero.tsx's isMobile branch), so it
+   needs its own small vertical padding — the .section right after it
+   already carries a generous top padding of its own, so this stays tight
+   rather than doubling up on that gap. */
+.chero__overlay--below {
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
 .chero__hud {
   position: absolute;
   z-index: 2;
@@ -2071,17 +2080,13 @@ ol {
     bottom: 84px;
   }
 
-  /* Shorter scrub track on mobile — less vertical space to spend on a
-     secondary page's intro before the actual contact content. */
-  .chero {
-    height: 190vh;
-  }
-  .chero__hud {
-    font-size: 10px;
-    bottom: 84px;
-  }
-  /* The left/right split leaves both pieces cramped against their own edge
-     at this width — back to the original stacked, centered layout. */
+  /* .chero and .chero__hud are desktop-only now — ContactHero renders the
+     .chero--mobile branch below this breakpoint instead, so their scrub
+     -track-specific rules would never match anything here. .chero__overlay
+     and .chero__heading--right stay, though: the mobile branch reuses
+     those same classes for the text block under the video (see
+     .chero__overlay--below), and still wants the stacked, centered layout
+     the left/right split is too cramped for at this width. */
   .chero__overlay {
     flex-direction: column;
     justify-content: center;

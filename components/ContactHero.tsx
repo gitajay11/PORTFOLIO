@@ -4,14 +4,19 @@ import { useEffect, useRef, useState } from "react";
 import ScrollHint from "./ScrollHint";
 
 /**
- * Bounded, scroll-scrubbed video intro for the Contact page only — not the
- * whole-document background ScrollVideoBackground uses everywhere else.
- * The track below is a fixed height (not the full page); once you scroll
- * past it the sticky video releases and normal page content continues.
+ * Bounded, scroll-scrubbed video intro for the Contact page on desktop; a
+ * large autoplay-loop 4:5 box followed by the kicker/heading on mobile,
+ * below WIDE_QUERY (900px) — same split and same reasoning as
+ * ScrollVideoBackground on every other route: scroll-scrubbing a small
+ * standalone box didn't read as intentional, and a whole-screen sticky
+ * track left the text stranded far from it. Reuses ScrollVideoBackground's
+ * .mvid/.mvid__box markup rather than inventing parallel classes, since
+ * it's already page-agnostic.
  *
- * Deliberately simpler than ScrollVideoBackground: no side-vs-stacked
- * layout logic, since there's no long name that needs a clear column next
- * to the subject here — just a short line of text, centred.
+ * Deliberately simpler than ScrollVideoBackground on desktop too: no
+ * side-vs-stacked layout logic, since there's no long name that needs a
+ * clear column next to the subject here — just a short line of text,
+ * centred.
  */
 const BLACK_POINT_FILTER = "brightness(0.914) contrast(1.208)";
 const NAT_W = 1280;
@@ -22,9 +27,14 @@ const PATCH_BLEED = 6;
 const TOTAL_FRAMES = 240;
 const EASE = 0.11;
 const SEEK_EPS = 1 / 48;
+const MOBILE_QUERY = "(max-width: 899px)";
 
 export default function ContactHero() {
+  const [isMobile, setIsMobile] = useState(false);
+
   const trackRef = useRef<HTMLDivElement>(null);
+  /** Points at whichever box is mounted — .chero__sticky (desktop) or
+      .mvid__box (mobile) — since only one of them ever renders. */
   const stickyRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const patchRef = useRef<HTMLDivElement>(null);
@@ -41,9 +51,16 @@ export default function ContactHero() {
   const readyRef = useRef(false);
 
   useEffect(() => {
+    const mq = window.matchMedia(MOBILE_QUERY);
+    setIsMobile(mq.matches);
+    const onChange = () => setIsMobile(mq.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
+  useEffect(() => {
     const video = videoRef.current;
-    const track = trackRef.current;
-    if (!video || !track) return;
+    if (!video) return;
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -93,73 +110,94 @@ export default function ContactHero() {
     if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) markReady();
     if (video.error) onError();
 
-    const unlock = () => {
-      video.play().then(() => video.pause()).catch(() => {});
-      window.removeEventListener("touchstart", unlock);
-      window.removeEventListener("click", unlock);
-    };
-    window.addEventListener("touchstart", unlock, { passive: true });
-    window.addEventListener("click", unlock);
-
     safetyTimer = window.setTimeout(markReady, 6000);
+
+    // Mobile: the box just plays the clip on a normal autoplaying loop, same
+    // as ScrollVideoBackground's mobile box. Desktop: local scroll progress
+    // through the track, exactly as before.
+    let unlock = () => {};
+    if (isMobile) {
+      video.play().catch(() => {
+        /* loadeddata/canplaythrough effectively retry this once decodable */
+      });
+    } else {
+      // Some mobile browsers won't decode until the element sees a gesture —
+      // desktop-only wiring (mobile already autoplays above).
+      unlock = () => {
+        video.play().then(() => video.pause()).catch(() => {});
+        window.removeEventListener("touchstart", unlock);
+        window.removeEventListener("click", unlock);
+      };
+      window.addEventListener("touchstart", unlock, { passive: true });
+      window.addEventListener("click", unlock);
+    }
 
     // Local progress: how far the TRACK has scrolled past the top of the
     // viewport, not whole-document progress. 0 while the track's top is at
     // or below the viewport top; 1 once its bottom has cleared the bottom.
-    let ticking = false;
-    const measure = () => {
-      const rect = track.getBoundingClientRect();
-      const scrollable = rect.height - window.innerHeight;
-      const p = scrollable > 0 ? Math.min(1, Math.max(0, -rect.top / scrollable)) : 0;
-      target.current = p * duration.current;
-    };
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        measure();
-        ticking = false;
-      });
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    measure();
+    // Desktop only — the mobile box isn't a scroll track any more.
+    let removeScrollListeners = () => {};
+    if (!isMobile) {
+      const track = trackRef.current;
+      let ticking = false;
+      const measure = () => {
+        if (!track) return;
+        const rect = track.getBoundingClientRect();
+        const scrollable = rect.height - window.innerHeight;
+        const p = scrollable > 0 ? Math.min(1, Math.max(0, -rect.top / scrollable)) : 0;
+        target.current = p * duration.current;
+      };
+      const onScroll = () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          measure();
+          ticking = false;
+        });
+      };
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", onScroll);
+      measure();
+      removeScrollListeners = () => {
+        window.removeEventListener("scroll", onScroll);
+        window.removeEventListener("resize", onScroll);
+      };
 
-    const tick = () => {
-      if (readyRef.current && duration.current) {
-        if (reduceMotion) {
-          current.current = target.current;
-        } else {
-          current.current += (target.current - current.current) * EASE;
-          if (Math.abs(target.current - current.current) < 0.0008) {
+      const tick = () => {
+        if (readyRef.current && duration.current) {
+          if (reduceMotion) {
             current.current = target.current;
+          } else {
+            current.current += (target.current - current.current) * EASE;
+            if (Math.abs(target.current - current.current) < 0.0008) {
+              current.current = target.current;
+            }
+          }
+
+          if (!video.seeking && Math.abs(video.currentTime - current.current) > SEEK_EPS) {
+            try {
+              video.currentTime = current.current;
+            } catch {
+              /* transient */
+            }
+          }
+
+          const p = current.current / (duration.current || 1);
+          if (frameRef.current) {
+            frameRef.current.textContent = String(Math.round(p * TOTAL_FRAMES)).padStart(3, "0");
+          }
+          if (pctRef.current) {
+            pctRef.current.textContent = String(Math.round(p * 100)).padStart(2, "0");
           }
         }
-
-        if (!video.seeking && Math.abs(video.currentTime - current.current) > SEEK_EPS) {
-          try {
-            video.currentTime = current.current;
-          } catch {
-            /* transient */
-          }
-        }
-
-        const p = current.current / (duration.current || 1);
-        if (frameRef.current) {
-          frameRef.current.textContent = String(Math.round(p * TOTAL_FRAMES)).padStart(3, "0");
-        }
-        if (pctRef.current) {
-          pctRef.current.textContent = String(Math.round(p * 100)).padStart(2, "0");
-        }
-      }
+        raf = requestAnimationFrame(tick);
+      };
       raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
+    }
 
     return () => {
       cancelAnimationFrame(raf);
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      removeScrollListeners();
       window.clearTimeout(readyTimer);
       window.clearTimeout(safetyTimer);
       window.removeEventListener("touchstart", unlock);
@@ -170,13 +208,14 @@ export default function ContactHero() {
       video.removeEventListener("canplaythrough", markReady);
       video.removeEventListener("error", onError);
     };
-  }, []);
+  }, [isMobile]);
 
   /**
    * Keep the watermark patch aligned with the video's rendered content box.
-   * Simpler than ScrollVideoBackground's version: the video here is sized
-   * by CSS alone (width:100%, object-fit:cover), not repositioned in JS, so
-   * this only has to read the box back, never write to it.
+   * The video is sized by CSS alone (width:100%, object-fit:cover) on both
+   * the desktop sticky box and the mobile box, not repositioned in JS, so
+   * this only has to read the box back, never write to it — works
+   * unchanged for whichever one is currently mounted.
    */
   useEffect(() => {
     const layout = () => {
@@ -211,7 +250,54 @@ export default function ContactHero() {
       observer?.disconnect();
       window.removeEventListener("resize", layout);
     };
-  }, []);
+  }, [isMobile]);
+
+  if (isMobile) {
+    return (
+      <section className="chero--mobile" aria-label="Contact intro">
+        <div className="mvid">
+          <div className="mvid__box" ref={stickyRef}>
+            {!failed && (
+              <video
+                ref={videoRef}
+                className={`mvid__video${ready ? " is-ready" : ""}`}
+                src="/AK.mp4"
+                style={{ filter: BLACK_POINT_FILTER }}
+                muted
+                loop
+                autoPlay
+                playsInline
+                preload="auto"
+                disablePictureInPicture
+              />
+            )}
+            {!failed && <div ref={patchRef} className="mvid__patch" />}
+            <div className="mvid__grain" />
+          </div>
+        </div>
+
+        {!ready && (
+          <div className="vidloader" aria-hidden="true">
+            <div className="vidloader__bar">
+              <span style={{ width: `${bufferPct}%` }} />
+            </div>
+            <p className="vidloader__text">{Math.round(bufferPct)}% — buffering frames</p>
+          </div>
+        )}
+
+        <div className="chero__overlay chero__overlay--below">
+          <p className="hero__kicker chero__kicker--left">
+            <span className="dot" /> let&rsquo;s connect
+          </p>
+          <p className="interlude__text chero__heading chero__heading--right">
+            Got something
+            <br />
+            worth <em>building</em>?
+          </p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="chero" ref={trackRef} aria-label="Contact intro">
