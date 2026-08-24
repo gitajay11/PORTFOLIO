@@ -1,7 +1,9 @@
 import About from "@/components/About";
+import Certifications from "@/components/Certifications";
 import ChatBot from "@/components/ChatBot";
 import Contact from "@/components/Contact";
 import CursorGlow from "@/components/CursorGlow";
+import Education from "@/components/Education";
 import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
 import Interlude from "@/components/Interlude";
@@ -35,6 +37,8 @@ export default function Home() {
         <Work />
         <Interlude {...heroStages[1]} />
         <Path />
+        <Education />
+        <Certifications />
         <Contact />
         <Footer />
       </main>

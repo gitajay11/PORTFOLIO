@@ -125,6 +125,103 @@ export const timeline = [
   },
 ];
 
+/**
+ * Education, newest first — same convention as `timeline`. `icon` picks
+ * the timeline-node glyph in Education.tsx: "cap" for degrees, "book"
+ * for school stages.
+ */
+export const education = [
+  {
+    icon: "cap" as const,
+    stage: "Bachelor's",
+    years: "2021 – 2025",
+    school: "B.Tech, Computer Science & Engineering",
+    field: "Vellore Institute of Technology — specialization in web & distributed systems.",
+    score: "CGPA 8.7 / 10",
+    location: "Vellore, Tamil Nadu",
+  },
+  {
+    icon: "book" as const,
+    stage: "Higher Secondary",
+    years: "2019 – 2021",
+    school: "Class XI – XII, PCM with Computer Science",
+    field: "Delhi Public School, R.K. Puram — CBSE board.",
+    score: "92.4% aggregate",
+    location: "New Delhi",
+  },
+  {
+    icon: "book" as const,
+    stage: "Secondary",
+    years: "2018 – 2019",
+    school: "Class X",
+    field: "Delhi Public School, R.K. Puram — CBSE board.",
+    score: "94.2% aggregate",
+    location: "New Delhi",
+  },
+];
+
+/**
+ * Completed certifications, newest first. `accent` picks the card's badge
+ * color ("green" | "blue") purely for visual rhythm across the grid —
+ * it carries no other meaning.
+ */
+export const certificates = [
+  {
+    badge: "AWS",
+    accent: "blue" as const,
+    date: "Jan 2025",
+    title: "AWS Certified Cloud Practitioner",
+    issuer: "Amazon Web Services",
+    id: "AWS-CCP-88213",
+    href: "#",
+  },
+  {
+    badge: "META",
+    accent: "green" as const,
+    date: "Nov 2024",
+    title: "Meta Front-End Developer",
+    issuer: "Meta · Coursera",
+    id: "COURSERA-9F31C7",
+    href: "#",
+  },
+  {
+    badge: "API",
+    accent: "green" as const,
+    date: "Jul 2024",
+    title: "API Fundamentals Student Expert",
+    issuer: "Postman",
+    id: "PM-SE-004471",
+    href: "#",
+  },
+  {
+    badge: "GA",
+    accent: "blue" as const,
+    date: "Mar 2024",
+    title: "Google Data Analytics Professional Certificate",
+    issuer: "Google · Coursera",
+    id: "COURSERA-2A88E1",
+    href: "#",
+  },
+  {
+    badge: "</>",
+    accent: "green" as const,
+    date: "Sep 2023",
+    title: "Responsive Web Design",
+    issuer: "freeCodeCamp",
+    id: "FCC-RWD-71A9",
+    href: "#",
+  },
+  {
+    badge: "JS",
+    accent: "green" as const,
+    date: "Feb 2023",
+    title: "JavaScript Algorithms & Data Structures",
+    issuer: "freeCodeCamp",
+    id: "FCC-JSADS-5C02",
+    href: "#",
+  },
+];
+
 export const socials = [
   { label: "GitHub", href: GITHUB_URL },
   { label: "LinkedIn", href: LINKEDIN_URL },
@@ -137,4 +234,6 @@ export const navSections = [
   { num: "02", id: "stack", label: "stack" },
   { num: "03", id: "work", label: "work" },
   { num: "04", id: "path", label: "path" },
+  { num: "05", id: "education", label: "education" },
+  { num: "06", id: "certifications", label: "certs" },
 ];
