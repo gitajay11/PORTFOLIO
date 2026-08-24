@@ -60,11 +60,7 @@ export default function Nav() {
       <header className={`nav${stuck ? " is-stuck" : ""}`}>
         <a className="nav__brand" href="#top">
           <span className="nav__logo">{profile.initials}</span>
-          <span className="nav__brandtext">
-            {profile.wordmark.split(".")[0]}
-            <span className="accent">.</span>
-            {profile.wordmark.split(".")[1]}
-          </span>
+          <span className="nav__brandtext">{profile.wordmark}</span>
         </a>
 
         <nav

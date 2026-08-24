@@ -168,6 +168,38 @@ ffmpeg -i public/AK.mp4 -c:v libx264 -crf 22 -g 1 -keyint_min 1 -an -movflags +f
 
 Then point the `src` in `ScrollVideoBackground.tsx` at the new file.
 
+## Fixed UI
+
+Three things are pinned to the viewport on every screen of the site:
+
+| Element | Position | Notes |
+| --- | --- | --- |
+| Header | top | Solid from the first pixel, not only once stuck |
+| Contact dock | bottom centre | LinkedIn, GitHub, WhatsApp, Email |
+| AI assistant | bottom left | Launcher plus chat panel |
+
+The frame-counter HUD sits above the dock row and hides below 720px; under
+720px the dock shifts off centre so it cannot land under the chat launcher.
+Verified for zero overlap between the three at desktop and mobile widths.
+
+### The AI assistant
+
+The widget works with or without an API key, which keeps it useful on a
+static host:
+
+- **With a key** — `app/api/chat/route.ts` calls Claude Opus 5 with a system
+  prompt built from `lib/content.ts`, so the bot can never drift from what the
+  page actually says. Low effort, 512 max tokens, cached system prompt.
+- **Without one** — the route returns 503 and the browser answers from the
+  keyword rules in `lib/chatKnowledge.ts`. The client remembers that answer
+  and stops re-requesting.
+
+To enable the live model, copy `.env.local.example` to `.env.local` and add
+your key. `.env.local` is gitignored; never commit a real key.
+
+The route caps history at 12 turns and 800 chars per message so one visitor
+cannot run up a bill, and validates every payload before it reaches the API.
+
 ## Editing the content
 
 Everything is in `lib/content.ts` — no JSX changes needed for copy edits.
@@ -180,6 +212,7 @@ Still needs your real details:
 
 - Full name renders as "Ajay Kumar" (inferred from `AK.mp4`)
 - All four projects, the stats (4 / 30 / 12), and the timeline entries
+- LINKEDIN_URL and WHATSAPP_NUMBER in lib/content.ts are placeholders
 - Every `href: "#"` in `projects` and `socials`
 
 The email is real: `ajayak15012004@gmail.com`.

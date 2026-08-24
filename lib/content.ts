@@ -5,12 +5,24 @@
  * NOTE: projects, stats and timeline entries are placeholders.
  */
 
+/**
+ * Contact endpoints, shared by the floating dock and the contact section.
+ *
+ * GITHUB_URL is real. LINKEDIN_URL and WHATSAPP_NUMBER are placeholders —
+ * replace them with your own. WHATSAPP_NUMBER must be in full international
+ * format with no +, spaces or dashes (e.g. "919876543210" for India).
+ */
+export const GITHUB_URL = "https://github.com/gitajay11";
+export const LINKEDIN_URL = "https://www.linkedin.com/in/your-handle";
+export const WHATSAPP_NUMBER = "910000000000";
+export const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}`;
+
 export const profile = {
   firstName: "AJAY",
   lastName: "KUMAR",
   shortName: "Ajay K",
   initials: "AK",
-  wordmark: "ajay.dev",
+  wordmark: "AJAYKUMAR",
   role: "developer",
   email: "ajayak15012004@gmail.com",
   status: "available for work",
@@ -114,9 +126,9 @@ export const timeline = [
 ];
 
 export const socials = [
-  { label: "GitHub", href: "#" },
-  { label: "LinkedIn", href: "#" },
-  { label: "X", href: "#" },
+  { label: "GitHub", href: GITHUB_URL },
+  { label: "LinkedIn", href: LINKEDIN_URL },
+  { label: "WhatsApp", href: WHATSAPP_URL },
   { label: "Résumé", href: "#" },
 ];
 
