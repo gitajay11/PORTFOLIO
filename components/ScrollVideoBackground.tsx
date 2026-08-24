@@ -13,15 +13,14 @@ import { subscribeToScroll } from "@/lib/scrollProgress";
 const ROUTES_WITHOUT_GLOBAL_VIDEO = ["/contact"];
 
 /**
- * Full-page scroll-scrubbed video background on desktop; a small,
- * self-contained, green-bordered 4:5 box on mobile (see the `isMobile`
- * branch near the bottom) — full-bleed fixed footage reads as too heavy on
- * a phone, so below WIDE_QUERY it becomes a normal in-flow block instead,
- * inset from the screen edges equally on every side and sitting below the
- * floating nav rather than under it (the nav pill used to land right over
- * the subject's head when the box went edge-to-edge). Either way the
- * video's currentTime is driven by scroll progress: the whole document on
- * desktop, the mobile box's own progress through the viewport on mobile.
+ * Full-page scroll-scrubbed video background on desktop; a large,
+ * self-contained, green-bordered 4:5 box that just autoplay-loops on mobile
+ * (see the `isMobile` branch near the bottom) — full-bleed fixed footage
+ * reads as too heavy on a phone, and scroll-scrubbing a small standalone
+ * box didn't read as intentional, so below WIDE_QUERY it's a normal
+ * in-flow block that sits below the floating nav (rather than pinned under
+ * it, which used to put the nav pill right over the subject's head) and
+ * just plays the clip on a loop like a normal muted video.
  *
  * The source clip sits on a near-black backdrop (RGB 13–21). The filter is a
  * linear black-point lift that maps everything below ~9% to 0 while leaving
@@ -183,54 +182,20 @@ export default function ScrollVideoBackground() {
     if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) markReady();
     if (video.error) onError();
 
-    // Some mobile browsers won't decode until the element sees a gesture.
-    const unlock = () => {
-      video.play().then(() => video.pause()).catch(() => {});
-      window.removeEventListener("touchstart", unlock);
-      window.removeEventListener("click", unlock);
-    };
-    window.addEventListener("touchstart", unlock, { passive: true });
-    window.addEventListener("click", unlock);
-
     // Never strand the loader on a slow connection.
     safetyTimer = window.setTimeout(markReady, 6000);
 
-    // Desktop: target is driven by whole-document scroll progress. Mobile:
-    // the box is a normal in-flow block now (no sticky pin), so its own
-    // progress through the viewport drives it instead — 0 while it's still
-    // below the viewport, 1 once it has fully scrolled past the top.
-    let unsubscribeScroll: () => void;
+    // Mobile: the box just plays the clip on a normal autoplaying loop —
+    // scroll-scrubbing a small standalone box didn't read as intentional.
+    // Desktop: target is still driven by whole-document scroll progress.
+    let unsubscribeScroll = () => {};
+    let unlock = () => {};
     if (isMobile) {
-      const box = layerRef.current;
-      let ticking = false;
-      const measure = () => {
-        if (!box) return;
-        // The box is the very first thing on the page, not an element
-        // further down that scrolls up into view — so progress runs from
-        // scrollY 0 (top of page) to scrollY == the box's own document
-        // offset + its height (fully scrolled past), not from "viewport
-        // height" the way an in-page element's reveal would.
-        const rect = box.getBoundingClientRect();
-        const docTop = rect.top + window.scrollY;
-        const total = docTop + rect.height;
-        const p = total > 0 ? Math.min(1, Math.max(0, window.scrollY / total)) : 0;
-        target.current = p * duration.current;
-      };
-      const onScroll = () => {
-        if (ticking) return;
-        ticking = true;
-        requestAnimationFrame(() => {
-          measure();
-          ticking = false;
-        });
-      };
-      window.addEventListener("scroll", onScroll, { passive: true });
-      window.addEventListener("resize", onScroll);
-      measure();
-      unsubscribeScroll = () => {
-        window.removeEventListener("scroll", onScroll);
-        window.removeEventListener("resize", onScroll);
-      };
+      video.play().catch(() => {
+        /* autoplay can be blocked before the element is in the DOM's
+           layout; loadeddata/canplaythrough retry it implicitly by the
+           browser once decodable, so nothing else to do here */
+      });
     } else {
       unsubscribeScroll = subscribeToScroll((p) => {
         target.current = p * duration.current;
@@ -244,40 +209,54 @@ export default function ScrollVideoBackground() {
           scrimRef.current.style.opacity = String(0.42 + ramp * 0.38);
         }
       });
+
+      // Some mobile browsers won't decode until the element sees a gesture —
+      // desktop-only wiring, but harmless to leave attached regardless of
+      // input type. Play-then-pause primes the decoder for scrubbing without
+      // actually starting playback, unlike the mobile loop above.
+      unlock = () => {
+        video.play().then(() => video.pause()).catch(() => {});
+        window.removeEventListener("touchstart", unlock);
+        window.removeEventListener("click", unlock);
+      };
+      window.addEventListener("touchstart", unlock, { passive: true });
+      window.addEventListener("click", unlock);
     }
 
-    const tick = () => {
-      if (readyRef.current && duration.current) {
-        if (reduceMotion) {
-          current.current = target.current;
-        } else {
-          current.current += (target.current - current.current) * EASE;
-          if (Math.abs(target.current - current.current) < 0.0008) {
+    if (!isMobile) {
+      const tick = () => {
+        if (readyRef.current && duration.current) {
+          if (reduceMotion) {
             current.current = target.current;
+          } else {
+            current.current += (target.current - current.current) * EASE;
+            if (Math.abs(target.current - current.current) < 0.0008) {
+              current.current = target.current;
+            }
+          }
+
+          // Only seek when the decoder is idle. Queuing seeks onto a busy
+          // element is what turns naive scrubbing into a stutter.
+          if (!video.seeking && Math.abs(video.currentTime - current.current) > SEEK_EPS) {
+            try {
+              video.currentTime = current.current;
+            } catch {
+              /* transient */
+            }
+          }
+
+          const p = current.current / (duration.current || 1);
+          if (frameRef.current) {
+            frameRef.current.textContent = String(Math.round(p * TOTAL_FRAMES)).padStart(3, "0");
+          }
+          if (pctRef.current) {
+            pctRef.current.textContent = String(Math.round(p * 100)).padStart(2, "0");
           }
         }
-
-        // Only seek when the decoder is idle. Queuing seeks onto a busy
-        // element is what turns naive scrubbing into a stutter.
-        if (!video.seeking && Math.abs(video.currentTime - current.current) > SEEK_EPS) {
-          try {
-            video.currentTime = current.current;
-          } catch {
-            /* transient */
-          }
-        }
-
-        const p = current.current / (duration.current || 1);
-        if (frameRef.current) {
-          frameRef.current.textContent = String(Math.round(p * TOTAL_FRAMES)).padStart(3, "0");
-        }
-        if (pctRef.current) {
-          pctRef.current.textContent = String(Math.round(p * 100)).padStart(2, "0");
-        }
-      }
+        raf = requestAnimationFrame(tick);
+      };
       raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
+    }
 
     return () => {
       cancelAnimationFrame(raf);
@@ -403,8 +382,8 @@ export default function ScrollVideoBackground() {
     return (
       <>
         {/* In-flow, not fixed: this pushes the rest of the page down instead
-            of sitting behind it. .mvid is a padded frame (equal gap on every
-            side — see globals.css); .mvid__box is the bordered 4:5 box. */}
+            of sitting behind it. .mvid is a padded frame (see globals.css);
+            .mvid__box is the bordered, looping 4:5 box. */}
         <div className="mvid">
           <div className="mvid__box" ref={layerRef}>
             {!failed && (
@@ -414,6 +393,8 @@ export default function ScrollVideoBackground() {
                 src="/AK.mp4"
                 style={{ filter: BLACK_POINT_FILTER }}
                 muted
+                loop
+                autoPlay
                 playsInline
                 preload="auto"
                 disablePictureInPicture

@@ -169,23 +169,23 @@ ol {
 
 /* =========================================================
    MOBILE VIDEO BLOCK — below the 900px WIDE_QUERY breakpoint,
-   ScrollVideoBackground renders this instead of .videoLayer: a small,
-   self-contained 4:5 box in normal document flow, inset from every screen
-   edge by the same gap (MOBILE_MARGIN below) instead of a whole-document
-   fixed background. Sitting in flow rather than pinned under the floating
-   nav is what keeps the nav pill off the subject's head — the box starts
-   below it instead of behind it.
+   ScrollVideoBackground renders this instead of .videoLayer: a large,
+   self-contained 4:5 box in normal document flow instead of a whole-
+   document fixed background. Sitting in flow rather than pinned under the
+   floating nav is what keeps the nav pill off the subject's head — the box
+   starts below it instead of behind it, hence the lopsided padding (top
+   has to clear the nav; the other sides don't and stay tight so the box
+   reads as large and the hero text below sits close, not stranded).
    ========================================================= */
 .mvid {
-  --mvid-margin: 90px;
-  padding: var(--mvid-margin);
+  padding: 90px 24px 16px;
   display: flex;
   justify-content: center;
 }
 .mvid__box {
   position: relative;
   width: 100%;
-  max-width: 420px;
+  max-width: 480px;
   aspect-ratio: 4 / 5;
   overflow: hidden;
   border: 2px solid var(--accent);
@@ -1961,14 +1961,16 @@ ol {
      and margin-top:auto on .hero__inner both existed to center content
      against a full-screen video background; without that background they
      just leave a huge empty gap above the text, so content now sits close
-     to the top instead, and the section is auto-height. The bottom padding
-     is a fixed 130px (not the vh-based clamp the desktop rule uses) so
-     .scrollhint — position:absolute, bottom:58px, ~34px tall — always has
-     room beneath the role line instead of risking an overlap now that this
-     section no longer reserves a full screen height. */
+     to the top instead (a small 20px gap under .mvid's own 16px bottom
+     padding — see MOBILE VIDEO BLOCK above), and the section is auto-
+     height. The bottom padding is a fixed 130px (not the vh-based clamp
+     the desktop rule uses) so .scrollhint — position:absolute, bottom:
+     58px, ~34px tall — always has room beneath the role line instead of
+     risking an overlap now that this section no longer reserves a full
+     screen height. */
   .hero {
     min-height: auto;
-    padding: 96px 24px 130px;
+    padding: 20px 24px 130px;
   }
   .hero__inner {
     margin-top: 0;
