@@ -314,13 +314,11 @@ to re-skin the site.
 
 Still needs your real details:
 
-- Full name renders as "Ajay Kumar" (inferred from `AK.mp4`)
-- All four projects, the stats (4 / 30 / 12), and the timeline entries
-- `qualifications` in `lib/content.ts` — every school, field and score is still a placeholder. (`certificates` is real — see below.)
-- LINKEDIN_URL and WHATSAPP_NUMBER in lib/content.ts are placeholders
-- Every `href: "#"` in `projects` and `socials`
+- The stats (4 / 30 / 12) and the timeline entries in `lib/content.ts`
+- `WHATSAPP_NUMBER` in `lib/content.ts` is still a placeholder
 
-The email is real: `ajayak15012004@gmail.com`.
+The rest is real: name, email, `GITHUB_URL`, `LINKEDIN_URL`, `projects`
+(Forgebyte), `qualifications`, and `certificates` — see below.
 
 ### Certificates are real
 
