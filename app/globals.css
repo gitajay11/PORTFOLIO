@@ -167,6 +167,55 @@ ol {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
+/* =========================================================
+   MOBILE VIDEO BLOCK — below the 900px WIDE_QUERY breakpoint,
+   ScrollVideoBackground renders this instead of .videoLayer: a bounded
+   4:5 block in normal document flow at the top of the page, rather than
+   a whole-document fixed background. .mvid is a tall scroll track;
+   .mvid__sticky pins to the viewport top for the ride and releases once
+   the track runs out — same technique as .chero/.chero__sticky on the
+   contact page, just shorter and narrower.
+   ========================================================= */
+.mvid {
+  position: relative;
+  height: 200vh;
+}
+.mvid__sticky {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--bg);
+  --video-top-inset: clamp(20px, 5.5vh, 68px);
+}
+.mvid__video {
+  position: absolute;
+  top: var(--video-top-inset);
+  left: 0;
+  width: 100%;
+  height: calc(100% - var(--video-top-inset));
+  max-width: none;
+  object-fit: cover;
+  object-position: 50% 0%;
+  opacity: 0;
+  transition: opacity 1.2s var(--ease);
+}
+.mvid__video.is-ready {
+  opacity: 1;
+}
+.mvid__patch {
+  position: absolute;
+  background: #000;
+  pointer-events: none;
+}
+.mvid__grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
 /* Loader + HUD are siblings of the video layer so they stay above content. */
 .vidloader {
   position: fixed;
@@ -1900,6 +1949,14 @@ ol {
 /* =========================================================
    RESPONSIVE
    ========================================================= */
+@media (max-width: 899px) {
+  /* The video is no longer behind .hero here (see .mvid above) — the
+     --face-bottom clearance it published doesn't correspond to anything on
+     this section any more, so a fixed value replaces it. */
+  .hero {
+    padding: 96px 24px clamp(48px, 8vh, 150px);
+  }
+}
 @media (max-width: 900px) {
   /* A short list centered in a tall viewport left ~225px of dead black
      space above and below it. Left-aligned rows with dividers — closer to

@@ -13,11 +13,14 @@ import { subscribeToScroll } from "@/lib/scrollProgress";
 const ROUTES_WITHOUT_GLOBAL_VIDEO = ["/contact"];
 
 /**
- * Full-page scroll-scrubbed video background.
- *
- * The video is fixed behind every section and its currentTime is driven by
- * progress through the ENTIRE document — top of the page is frame 0, bottom
- * of the footer is the last frame.
+ * Full-page scroll-scrubbed video background on desktop; a bounded 4:5
+ * block at the top of the document on mobile (see the `isMobile` branch
+ * near the bottom) — full-bleed fixed footage reads as too heavy on a
+ * phone, so below WIDE_QUERY it becomes a normal in-flow block instead,
+ * using the same sticky-track scrub technique as ContactHero, just
+ * shorter and narrower. Either way the video's currentTime is driven by
+ * scroll progress: the whole document on desktop, just its own track on
+ * mobile.
  *
  * The source clip sits on a near-black backdrop (RGB 13–21). The filter is a
  * linear black-point lift that maps everything below ~9% to 0 while leaving
@@ -65,11 +68,13 @@ const FACE_BOTTOM_Y = 420;
 /**
  * Where the subject's centre should sit, as a fraction of viewport width.
  * On desktop he is pushed right so the name has a clear column beside him;
- * on narrow screens he stays centred and the name sits below, as before.
+ * on narrow screens (including the mobile block) he stays centred.
  */
 const SUBJ_TARGET_WIDE = 0.7;
 const SUBJ_TARGET_NARROW = 0.5;
 const WIDE_QUERY = "(min-width: 900px)";
+/** Exact complement of WIDE_QUERY — the two must partition cleanly. */
+const MOBILE_QUERY = "(max-width: 899px)";
 
 /**
  * The side-by-side hero is only used when the column beside the subject can
@@ -91,8 +96,14 @@ export default function ScrollVideoBackground() {
   const pathname = usePathname();
   const suppressed = ROUTES_WITHOUT_GLOBAL_VIDEO.includes(pathname);
 
+  const [isMobile, setIsMobile] = useState(false);
+
   const videoRef = useRef<HTMLVideoElement>(null);
+  /** Points at whichever box is currently mounted — the desktop fixed layer
+      or the mobile sticky box — since only one of them ever renders. */
   const layerRef = useRef<HTMLDivElement>(null);
+  /** Mobile-only: the tall scroll track .mvid__sticky pins inside. */
+  const trackRef = useRef<HTMLDivElement>(null);
   const patchRef = useRef<HTMLDivElement>(null);
   const scrimRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<HTMLSpanElement>(null);
@@ -107,6 +118,14 @@ export default function ScrollVideoBackground() {
   const current = useRef(0);
   const duration = useRef(0);
   const readyRef = useRef(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia(MOBILE_QUERY);
+    setIsMobile(mq.matches);
+    const onChange = () => setIsMobile(mq.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -177,18 +196,50 @@ export default function ScrollVideoBackground() {
     // Never strand the loader on a slow connection.
     safetyTimer = window.setTimeout(markReady, 6000);
 
-    const unsubscribe = subscribeToScroll((p) => {
-      target.current = p * duration.current;
+    // Desktop: target is driven by whole-document scroll progress. Mobile:
+    // driven by local progress through this component's own track, exactly
+    // like ContactHero — 0 while the track's top is at or below the
+    // viewport top, 1 once its bottom has cleared the bottom.
+    let unsubscribeScroll: () => void;
+    if (isMobile) {
+      const track = trackRef.current;
+      let ticking = false;
+      const measure = () => {
+        if (!track) return;
+        const rect = track.getBoundingClientRect();
+        const scrollable = rect.height - window.innerHeight;
+        const p = scrollable > 0 ? Math.min(1, Math.max(0, -rect.top / scrollable)) : 0;
+        target.current = p * duration.current;
+      };
+      const onScroll = () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          measure();
+          ticking = false;
+        });
+      };
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", onScroll);
+      measure();
+      unsubscribeScroll = () => {
+        window.removeEventListener("scroll", onScroll);
+        window.removeEventListener("resize", onScroll);
+      };
+    } else {
+      unsubscribeScroll = subscribeToScroll((p) => {
+        target.current = p * duration.current;
 
-      // Scrim darkens once the hero is behind us so body copy stays readable
-      // over the moving footage. Ramps across the first viewport of scroll.
-      if (scrimRef.current) {
-        const docScroll = document.documentElement.scrollHeight - window.innerHeight;
-        const heroFraction = docScroll > 0 ? window.innerHeight / docScroll : 1;
-        const ramp = Math.min(1, heroFraction > 0 ? p / heroFraction : 1);
-        scrimRef.current.style.opacity = String(0.42 + ramp * 0.38);
-      }
-    });
+        // Scrim darkens once the hero is behind us so body copy stays readable
+        // over the moving footage. Ramps across the first viewport of scroll.
+        if (scrimRef.current) {
+          const docScroll = document.documentElement.scrollHeight - window.innerHeight;
+          const heroFraction = docScroll > 0 ? window.innerHeight / docScroll : 1;
+          const ramp = Math.min(1, heroFraction > 0 ? p / heroFraction : 1);
+          scrimRef.current.style.opacity = String(0.42 + ramp * 0.38);
+        }
+      });
+    }
 
     const tick = () => {
       if (readyRef.current && duration.current) {
@@ -225,7 +276,7 @@ export default function ScrollVideoBackground() {
 
     return () => {
       cancelAnimationFrame(raf);
-      unsubscribe();
+      unsubscribeScroll();
       window.clearTimeout(readyTimer);
       window.clearTimeout(safetyTimer);
       window.removeEventListener("touchstart", unlock);
@@ -236,11 +287,15 @@ export default function ScrollVideoBackground() {
       video.removeEventListener("canplaythrough", markReady);
       video.removeEventListener("error", onError);
     };
-  }, []);
+  }, [isMobile]);
 
   /**
    * Keep the watermark patch aligned with the video's rendered content box.
-   * Only runs on mount and resize — never per frame.
+   * Only runs on mount, resize, and whenever the mobile/desktop markup
+   * swaps (layerRef then points at a differently-sized box). The math is
+   * container-size-agnostic — it reads layer.clientWidth/clientHeight
+   * directly — so the same function positions both the small mobile box
+   * and the full desktop layer without a separate branch.
    */
   useEffect(() => {
     const layout = () => {
@@ -261,6 +316,8 @@ export default function ScrollVideoBackground() {
 
       // Would the side-by-side hero actually fit? Try it, measure the column
       // it would leave, and fall back to the stacked layout if it is too tight.
+      // Never applicable on the mobile block — WIDE_QUERY can't match below
+      // 900px — so this naturally collapses to the centred target there.
       const minLeft = cw - renderedW;
       const sideLeft = Math.max(SUBJ_TARGET_WIDE * cw - SUBJ_CX * scale, minLeft);
       const sideColumn =
@@ -287,7 +344,9 @@ export default function ScrollVideoBackground() {
       video.style.height = `${renderedH}px`;
 
       // Hand the hero the two lines it needs to stay clear of: the column
-      // beside the subject, and the bottom of his head.
+      // beside the subject, and the bottom of his head. Unused on mobile —
+      // .hero gets a fixed top padding there instead, since the video is no
+      // longer behind it — but harmless to keep publishing.
       const root = document.documentElement.style;
       root.setProperty("--subject-left", `${Math.round(left + SUBJ_EDGE_X * scale)}px`);
       root.setProperty("--face-bottom", `${Math.round(inset + FACE_BOTTOM_Y * scale)}px`);
@@ -324,13 +383,51 @@ export default function ScrollVideoBackground() {
       window.removeEventListener("orientationchange", layout);
       mq.removeEventListener("change", layout);
     };
-  }, []);
+  }, [isMobile]);
 
   // After all hooks, never before — this only changes what renders, not
   // how many hooks run, so it doesn't violate the rules of hooks. The
   // effects above still fire on a suppressed route; they no-op harmlessly
   // since videoRef/layerRef never attach to anything.
   if (suppressed) return null;
+
+  if (isMobile) {
+    return (
+      <>
+        {/* In-flow, not fixed: this pushes the rest of the page down instead
+            of sitting behind it. .mvid is a tall scroll track; .mvid__sticky
+            pins to the top of the viewport for the ride, same technique as
+            ContactHero's .chero/.chero__sticky. */}
+        <div className="mvid" ref={trackRef}>
+          <div className="mvid__sticky" ref={layerRef}>
+            {!failed && (
+              <video
+                ref={videoRef}
+                className={`mvid__video${ready ? " is-ready" : ""}`}
+                src="/AK.mp4"
+                style={{ filter: BLACK_POINT_FILTER }}
+                muted
+                playsInline
+                preload="auto"
+                disablePictureInPicture
+              />
+            )}
+            {!failed && <div ref={patchRef} className="mvid__patch" />}
+            <div className="mvid__grain" />
+          </div>
+        </div>
+
+        {!ready && (
+          <div className="vidloader" aria-hidden="true">
+            <div className="vidloader__bar">
+              <span style={{ width: `${bufferPct}%` }} />
+            </div>
+            <p className="vidloader__text">{Math.round(bufferPct)}% — buffering frames</p>
+          </div>
+        )}
+      </>
+    );
+  }
 
   return (
     <>
