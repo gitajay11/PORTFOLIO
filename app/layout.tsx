@@ -8,16 +8,15 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "Ajay K — Developer",
+    default: "AJAYKUMAR",
     // Sub-pages (e.g. /education/qualification) set title: "Qualification"
-    // and this composes it into "Qualification — Ajay K".
-    template: "%s — Ajay K",
+    // and this composes it into "Qualification — AJAYKUMAR".
+    template: "%s — AJAYKUMAR",
   },
   description:
     "Developer portfolio — building fast, resilient software for the web.",
-  icons: {
-    icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>%F0%9F%92%BB</text></svg>",
-  },
+  // No `icons` field: app/icon.png and app/apple-icon.png (the AK logo) are
+  // picked up automatically by Next's file-convention favicon handling.
 };
 
 export const viewport: Viewport = {
