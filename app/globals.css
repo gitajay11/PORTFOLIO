@@ -169,32 +169,37 @@ ol {
 
 /* =========================================================
    MOBILE VIDEO BLOCK — below the 900px WIDE_QUERY breakpoint,
-   ScrollVideoBackground renders this instead of .videoLayer: a bounded
-   4:5 block in normal document flow at the top of the page, rather than
-   a whole-document fixed background. .mvid is a tall scroll track;
-   .mvid__sticky pins to the viewport top for the ride and releases once
-   the track runs out — same technique as .chero/.chero__sticky on the
-   contact page, just shorter and narrower.
+   ScrollVideoBackground renders this instead of .videoLayer: a small,
+   self-contained 4:5 box in normal document flow, inset from every screen
+   edge by the same gap (MOBILE_MARGIN below) instead of a whole-document
+   fixed background. Sitting in flow rather than pinned under the floating
+   nav is what keeps the nav pill off the subject's head — the box starts
+   below it instead of behind it.
    ========================================================= */
 .mvid {
-  position: relative;
-  height: 200vh;
+  --mvid-margin: 90px;
+  padding: var(--mvid-margin);
+  display: flex;
+  justify-content: center;
 }
-.mvid__sticky {
-  position: sticky;
-  top: 0;
+.mvid__box {
+  position: relative;
   width: 100%;
+  max-width: 420px;
   aspect-ratio: 4 / 5;
   overflow: hidden;
+  border: 2px solid var(--accent);
+  border-radius: 14px;
   background: var(--bg);
-  --video-top-inset: clamp(20px, 5.5vh, 68px);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4), 0 0 32px -6px var(--accent-glow),
+    0 24px 54px -30px #000;
 }
 .mvid__video {
   position: absolute;
-  top: var(--video-top-inset);
+  top: 0;
   left: 0;
   width: 100%;
-  height: calc(100% - var(--video-top-inset));
+  height: 100%;
   max-width: none;
   object-fit: cover;
   object-position: 50% 0%;

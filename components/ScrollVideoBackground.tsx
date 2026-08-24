@@ -13,14 +13,15 @@ import { subscribeToScroll } from "@/lib/scrollProgress";
 const ROUTES_WITHOUT_GLOBAL_VIDEO = ["/contact"];
 
 /**
- * Full-page scroll-scrubbed video background on desktop; a bounded 4:5
- * block at the top of the document on mobile (see the `isMobile` branch
- * near the bottom) — full-bleed fixed footage reads as too heavy on a
- * phone, so below WIDE_QUERY it becomes a normal in-flow block instead,
- * using the same sticky-track scrub technique as ContactHero, just
- * shorter and narrower. Either way the video's currentTime is driven by
- * scroll progress: the whole document on desktop, just its own track on
- * mobile.
+ * Full-page scroll-scrubbed video background on desktop; a small,
+ * self-contained, green-bordered 4:5 box on mobile (see the `isMobile`
+ * branch near the bottom) — full-bleed fixed footage reads as too heavy on
+ * a phone, so below WIDE_QUERY it becomes a normal in-flow block instead,
+ * inset from the screen edges equally on every side and sitting below the
+ * floating nav rather than under it (the nav pill used to land right over
+ * the subject's head when the box went edge-to-edge). Either way the
+ * video's currentTime is driven by scroll progress: the whole document on
+ * desktop, the mobile box's own progress through the viewport on mobile.
  *
  * The source clip sits on a near-black backdrop (RGB 13–21). The filter is a
  * linear black-point lift that maps everything below ~9% to 0 while leaving
@@ -100,10 +101,8 @@ export default function ScrollVideoBackground() {
 
   const videoRef = useRef<HTMLVideoElement>(null);
   /** Points at whichever box is currently mounted — the desktop fixed layer
-      or the mobile sticky box — since only one of them ever renders. */
+      or the mobile box — since only one of them ever renders. */
   const layerRef = useRef<HTMLDivElement>(null);
-  /** Mobile-only: the tall scroll track .mvid__sticky pins inside. */
-  const trackRef = useRef<HTMLDivElement>(null);
   const patchRef = useRef<HTMLDivElement>(null);
   const scrimRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<HTMLSpanElement>(null);
@@ -197,18 +196,20 @@ export default function ScrollVideoBackground() {
     safetyTimer = window.setTimeout(markReady, 6000);
 
     // Desktop: target is driven by whole-document scroll progress. Mobile:
-    // driven by local progress through this component's own track, exactly
-    // like ContactHero — 0 while the track's top is at or below the
-    // viewport top, 1 once its bottom has cleared the bottom.
+    // the box is a normal in-flow block now (no sticky pin), so its own
+    // progress through the viewport drives it instead — 0 while it's still
+    // below the viewport, 1 once it has fully scrolled past the top.
     let unsubscribeScroll: () => void;
     if (isMobile) {
-      const track = trackRef.current;
+      const box = layerRef.current;
       let ticking = false;
       const measure = () => {
-        if (!track) return;
-        const rect = track.getBoundingClientRect();
-        const scrollable = rect.height - window.innerHeight;
-        const p = scrollable > 0 ? Math.min(1, Math.max(0, -rect.top / scrollable)) : 0;
+        if (!box) return;
+        const rect = box.getBoundingClientRect();
+        const vh = window.innerHeight;
+        const total = vh + rect.height;
+        const traveled = vh - rect.top;
+        const p = total > 0 ? Math.min(1, Math.max(0, traveled / total)) : 0;
         target.current = p * duration.current;
       };
       const onScroll = () => {
@@ -308,7 +309,10 @@ export default function ScrollVideoBackground() {
       const chFull = layer.clientHeight;
       if (!cw || !chFull) return;
 
-      const inset = topInsetFor(chFull);
+      // The mobile box already sits clear of the nav (it's a normal in-flow
+      // block below it, not pinned under it), so it needs no reserved top
+      // strip — the video can fill the box edge to edge.
+      const inset = isMobile ? 0 : topInsetFor(chFull);
       // Cover the area below the inset, preserving aspect.
       const scale = Math.max(cw / NAT_W, (chFull - inset) / NAT_H);
       const renderedW = NAT_W * scale;
@@ -395,11 +399,10 @@ export default function ScrollVideoBackground() {
     return (
       <>
         {/* In-flow, not fixed: this pushes the rest of the page down instead
-            of sitting behind it. .mvid is a tall scroll track; .mvid__sticky
-            pins to the top of the viewport for the ride, same technique as
-            ContactHero's .chero/.chero__sticky. */}
-        <div className="mvid" ref={trackRef}>
-          <div className="mvid__sticky" ref={layerRef}>
+            of sitting behind it. .mvid is a padded frame (equal gap on every
+            side — see globals.css); .mvid__box is the bordered 4:5 box. */}
+        <div className="mvid">
+          <div className="mvid__box" ref={layerRef}>
             {!failed && (
               <video
                 ref={videoRef}
