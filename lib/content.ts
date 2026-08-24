@@ -71,34 +71,18 @@ export const stackCards = [
   },
 ];
 
-export const projects = [
+export const projects: {
+  title: string;
+  body: string;
+  tags: string[];
+  live: string;
+  code?: string;
+}[] = [
   {
-    title: "Nebula Analytics",
-    body: "Real-time event dashboard handling ~2M events/day. Streaming ingest, rollup tables, and a UI that renders 50k points without dropping frames.",
-    tags: ["Next.js", "Node", "Postgres", "Redis"],
-    live: "#",
-    code: "#",
-  },
-  {
-    title: "Forge CLI",
-    body: "A zero-config scaffolding tool for TypeScript services. Generates the repo, CI, Docker setup and health checks in one command.",
-    tags: ["TypeScript", "Go", "Docker"],
-    live: "#",
-    code: "#",
-  },
-  {
-    title: "Driftwood",
-    body: "Collaborative markdown editor with CRDT sync and offline-first storage. Conflict-free edits across tabs, devices and flaky connections.",
-    tags: ["React", "WebSockets", "IndexedDB"],
-    live: "#",
-    code: "#",
-  },
-  {
-    title: "Pulse Monitor",
-    body: "Self-hosted uptime monitoring with alert routing. Sub-second checks, incident timelines, and a status page you can hand to customers.",
-    tags: ["Python", "FastAPI", "AWS"],
-    live: "#",
-    code: "#",
+    title: "Forgebyte",
+    body: "A freelance web application development studio — full-stack product builds, APIs & backend systems, MVP sprints, and ongoing support for founders and teams who need to move fast without cutting corners.",
+    tags: ["Next.js", "TypeScript", "Tailwind CSS", "PostgreSQL"],
+    live: "https://www.forgebyte.online/",
   },
 ];
 

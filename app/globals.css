@@ -1854,11 +1854,47 @@ ol {
 .footer__mid {
   color: rgba(255, 255, 255, 0.16);
 }
+/* Floating back-to-top FAB — fixed to the viewport, not the footer row, so
+   it hovers above content and fades in once there's something to scroll
+   back from. Sits bottom-right: .chat owns bottom-left, .dock owns
+   bottom-centre (desktop) / bottom-right (mobile, see the responsive rule
+   below, which stacks this above it instead of colliding). */
 .footer__top {
-  transition: color 0.25s;
+  position: fixed;
+  z-index: 46;
+  right: clamp(14px, 3vw, 28px);
+  bottom: 20px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(16px) saturate(1.1);
+  color: var(--fg-dim);
+  font-size: 16px;
+  text-shadow: none;
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  box-shadow: 0 18px 40px -22px #000;
+  transition: opacity 0.3s var(--ease), transform 0.3s var(--ease),
+    color 0.25s, border-color 0.25s, box-shadow 0.3s;
+}
+.footer__top.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
 }
 .footer__top:hover {
   color: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 20px 44px -20px #000, 0 0 26px -4px var(--accent-glow);
+  transform: translateY(-3px);
+}
+.footer__top.is-visible:hover {
+  transform: translateY(-3px);
 }
 
 /* =========================================================
@@ -2349,6 +2385,14 @@ ol {
   .dock svg {
     width: 17px;
     height: 17px;
+  }
+  /* Stack above the dock now that it's shared this corner, instead of
+     overlapping it. */
+  .footer__top {
+    right: 14px;
+    bottom: 72px;
+    width: 40px;
+    height: 40px;
   }
 }
 

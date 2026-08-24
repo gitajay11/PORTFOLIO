@@ -29,12 +29,14 @@ export default function Work() {
                   </ul>
                 </div>
                 <div className="project__links">
-                  <a href={p.live} className="ilink">
+                  <a href={p.live} target="_blank" rel="noopener noreferrer" className="ilink">
                     live <span>&#8599;</span>
                   </a>
-                  <a href={p.code} className="ilink">
-                    code <span>&#8599;</span>
-                  </a>
+                  {p.code && (
+                    <a href={p.code} className="ilink">
+                      code <span>&#8599;</span>
+                    </a>
+                  )}
                 </div>
               </article>
             </Reveal>
