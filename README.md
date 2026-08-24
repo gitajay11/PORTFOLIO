@@ -11,7 +11,8 @@ app/
 components/
   ScrollVideoBackground.tsx   the fixed, scroll-scrubbed video layer
   Reveal.tsx / Counter.tsx    scroll-triggered animations
-  Nav / Hero / Interlude / About / Stack / Work / Path / Contact / Footer
+  Nav / Hero / Interlude / About / Stack / Work / Path / Education /
+  Certifications (+ CertificateCard) / Contact / Footer
 lib/
   content.ts        ALL site copy — edit here
   scrollProgress.ts one scroll listener shared by every component
@@ -225,6 +226,7 @@ Still needs your real details:
 
 - Full name renders as "Ajay Kumar" (inferred from `AK.mp4`)
 - All four projects, the stats (4 / 30 / 12), and the timeline entries
+- `education` and `certificates` in `lib/content.ts` — every school, score, and certificate is a placeholder
 - LINKEDIN_URL and WHATSAPP_NUMBER in lib/content.ts are placeholders
 - Every `href: "#"` in `projects` and `socials`
 
