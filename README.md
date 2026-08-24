@@ -174,13 +174,26 @@ Three things are pinned to the viewport on every screen of the site:
 
 | Element | Position | Notes |
 | --- | --- | --- |
-| Header | top | Solid from the first pixel, not only once stuck |
+| Header | top, floating | Detached island, shrinks slightly on scroll |
 | Contact dock | bottom centre | LinkedIn, GitHub, WhatsApp, Email |
 | AI assistant | bottom left | Launcher plus chat panel |
 
 The frame-counter HUD sits above the dock row and hides below 720px; under
 720px the dock shifts off centre so it cannot land under the chat launcher.
 Verified for zero overlap between the three at desktop and mobile widths.
+
+The header is a floating island rather than an edge-to-edge bar: centred with
+auto margins, capped at the content width, and shrinking slightly once you
+scroll.
+
+Two properties would each have made it a containing block for
+position:fixed descendants, which would trap the full-screen mobile menu
+inside the header:
+
+- **transform** — so it centres with left:0/right:0 and auto margins instead
+  of translateX(-50%).
+- **backdrop-filter** — so the blur lives on a ::before pseudo-element
+  rather than on .nav itself.
 
 ### The AI assistant
 

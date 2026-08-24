@@ -271,29 +271,48 @@ ol {
   box-shadow: 0 0 12px var(--accent-glow);
 }
 
+/* Floating header island. Centred with auto margins rather than a
+   transform, and the blur lives on ::before rather than on .nav itself —
+   both transform and backdrop-filter make an element a containing block for
+   position:fixed descendants, which would trap the mobile menu inside the
+   header instead of letting it cover the viewport. */
 .nav {
   position: fixed;
-  top: 0;
+  top: 14px;
   left: 0;
   right: 0;
+  margin: 0 auto;
+  width: min(calc(100% - 24px), var(--wrap));
   z-index: 50;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px clamp(20px, 5vw, 56px);
-  /* Legible from the first pixel of scroll, not only once stuck. */
+  gap: 14px;
+  padding: 10px 12px 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  box-shadow: 0 20px 44px -24px #000, inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transition: top 0.4s var(--ease), width 0.4s var(--ease),
+    border-color 0.4s var(--ease), box-shadow 0.4s var(--ease);
+}
+.nav::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
   background: rgba(0, 0, 0, 0.72);
   backdrop-filter: blur(16px) saturate(1.1);
-  border-bottom: 1px solid var(--line);
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04), 0 10px 30px -18px #000;
-  transition: background 0.4s var(--ease), border-color 0.4s var(--ease),
-    padding 0.4s var(--ease);
+  transition: background 0.4s var(--ease);
 }
 .nav.is-stuck {
-  background: rgba(0, 0, 0, 0.88);
-  border-bottom-color: rgba(255, 255, 255, 0.18);
-  padding-top: 11px;
-  padding-bottom: 11px;
+  top: 10px;
+  width: min(calc(100% - 24px), 1040px);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 24px 54px -26px #000, inset 0 1px 0 rgba(255, 255, 255, 0.09);
+}
+.nav.is-stuck::before {
+  background: rgba(0, 0, 0, 0.9);
 }
 
 .nav__brand {
@@ -1144,6 +1163,11 @@ ol {
   }
   .nav__burger {
     display: flex;
+    z-index: 2;
+  }
+  /* Both sit above the full-screen menu overlay, which is a later sibling
+     and would otherwise paint over the wordmark. */
+  .nav__brand {
     z-index: 2;
   }
 
