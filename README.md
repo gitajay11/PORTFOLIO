@@ -264,15 +264,24 @@ inside the header:
 The widget works with or without an API key, which keeps it useful on a
 static host:
 
-- **With a key** — `app/api/chat/route.ts` calls Claude Opus 5 with a system
-  prompt built from `lib/content.ts`, so the bot can never drift from what the
-  page actually says. Low effort, 512 max tokens, cached system prompt.
+- **With a key** — `app/api/chat/route.ts` calls Groq's OpenAI-compatible
+  chat completions API (model: `llama-3.3-70b-versatile`) with a system
+  prompt built from `lib/content.ts`, so the bot can never drift from what
+  the page actually says. Groq's system prompt is just the first message in
+  the array — unlike Anthropic, there's no separate top-level `system` field.
 - **Without one** — the route returns 503 and the browser answers from the
   keyword rules in `lib/chatKnowledge.ts`. The client remembers that answer
   and stops re-requesting.
 
-To enable the live model, copy `.env.local.example` to `.env.local` and add
-your key. `.env.local` is gitignored; never commit a real key.
+To enable the live model:
+
+1. Get a key at [console.groq.com/keys](https://console.groq.com/keys).
+2. Copy `.env.local.example` to `.env.local` — not just edit the example
+   file, that copy step matters, since `.env.local.example` is never read by
+   the app.
+3. Set `GROQ_API_KEY=` to your real key inside `.env.local`.
+
+`.env.local` is gitignored; never commit a real key.
 
 The route caps history at 12 turns and 800 chars per message so one visitor
 cannot run up a bill, and validates every payload before it reaches the API.
@@ -289,11 +298,23 @@ Still needs your real details:
 
 - Full name renders as "Ajay Kumar" (inferred from `AK.mp4`)
 - All four projects, the stats (4 / 30 / 12), and the timeline entries
-- `qualifications` and `certificates` in `lib/content.ts` — every school, score, and certificate is a placeholder
+- `qualifications` in `lib/content.ts` — every school, field and score is still a placeholder. (`certificates` is real — see below.)
 - LINKEDIN_URL and WHATSAPP_NUMBER in lib/content.ts are placeholders
 - Every `href: "#"` in `projects` and `socials`
 
 The email is real: `ajayak15012004@gmail.com`.
+
+### Certificates are real
+
+`certificates` in `lib/content.ts` is sourced from actual certificate PDFs
+(Anthropic's Claude Certified track and two Microsoft Learn certifications) —
+title, issuer, date, credential ID, and the verify link all come straight off
+each document. The source PDFs live in `/certificates` locally but aren't
+committed (`.gitignore`) — the site doesn't need to serve them, everything it
+uses from them is already in `content.ts`, and there's no reason to publish
+personal credential documents to a public repo when a link already verifies
+each one. Add new certificates by dropping a PDF in that folder and adding
+the corresponding entry to the array; nothing else reads the folder.
 
 ## Notes
 

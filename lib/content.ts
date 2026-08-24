@@ -162,64 +162,70 @@ export const qualifications = [
 ];
 
 /**
- * Completed certifications, newest first. `accent` picks the card's badge
- * color ("green" | "blue") purely for visual rhythm across the grid —
- * it carries no other meaning. Lives at /education/certifications.
+ * Completed certifications, newest first — real, from PDFs supplied in
+ * /certificates (not committed; source documents, not build input). `accent`
+ * picks the card's badge color ("green" | "blue") purely for visual rhythm
+ * across the grid, one per issuer here — it carries no other meaning.
+ * Lives at /education/certifications.
+ *
+ * `href` links are the verify URLs printed on each certificate (Credly for
+ * the Anthropic ones, Microsoft Learn for the Microsoft ones) — real,
+ * not placeholders.
  */
 export const certificates = [
   {
-    badge: "AWS",
+    badge: "AI",
+    accent: "green" as const,
+    date: "Aug 2026",
+    title: "Claude Certified Associate - Foundations",
+    issuer: "Anthropic",
+    id: "CREDLY-E4C89032",
+    href: "https://www.credly.com/badges/e4c89032-c68c-4b2b-be9a-953350b97ab0",
+  },
+  {
+    badge: "AI",
+    accent: "green" as const,
+    date: "Aug 2026",
+    title: "Claude Certified Architect - Professional",
+    issuer: "Anthropic",
+    id: "CREDLY-229CA9AF",
+    href: "https://www.credly.com/badges/229ca9af-e3c1-49df-96b2-e4d51cc44bb6",
+  },
+  {
+    badge: "AI",
+    accent: "green" as const,
+    date: "Aug 2026",
+    title: "Claude Certified Developer - Foundations",
+    issuer: "Anthropic",
+    id: "CREDLY-02FA97FC",
+    href: "https://www.credly.com/badges/02fa97fc-0a2f-4069-bf88-d041392e9e63",
+  },
+  {
+    badge: "AI",
+    accent: "green" as const,
+    date: "Jul 2026",
+    title: "Claude Certified Architect - Foundations",
+    issuer: "Anthropic",
+    id: "CREDLY-6C60AD33",
+    href: "https://www.credly.com/badges/6c60ad33-9ff5-4583-b23f-9d7f6435dc19",
+  },
+  {
+    badge: "MS",
     accent: "blue" as const,
-    date: "Jan 2025",
-    title: "AWS Certified Cloud Practitioner",
-    issuer: "Amazon Web Services",
-    id: "AWS-CCP-88213",
-    href: "#",
+    date: "May 2026",
+    title: "Microsoft Certified: Fabric Data Engineer Associate",
+    issuer: "Microsoft",
+    id: "5D3E9AA3FE808AAD",
+    href: "https://learn.microsoft.com/en-us/users/ajaykumara-5300/credentials/certification/fabric-data-engineer-associate?tab=credentials-tab",
   },
   {
-    badge: "META",
-    accent: "green" as const,
-    date: "Nov 2024",
-    title: "Meta Front-End Developer",
-    issuer: "Meta · Coursera",
-    id: "COURSERA-9F31C7",
-    href: "#",
-  },
-  {
-    badge: "API",
-    accent: "green" as const,
-    date: "Jul 2024",
-    title: "API Fundamentals Student Expert",
-    issuer: "Postman",
-    id: "PM-SE-004471",
-    href: "#",
-  },
-  {
-    badge: "GA",
+    badge: "MS",
     accent: "blue" as const,
-    date: "Mar 2024",
-    title: "Google Data Analytics Professional Certificate",
-    issuer: "Google · Coursera",
-    id: "COURSERA-2A88E1",
-    href: "#",
-  },
-  {
-    badge: "</>",
-    accent: "green" as const,
-    date: "Sep 2023",
-    title: "Responsive Web Design",
-    issuer: "freeCodeCamp",
-    id: "FCC-RWD-71A9",
-    href: "#",
-  },
-  {
-    badge: "JS",
-    accent: "green" as const,
-    date: "Feb 2023",
-    title: "JavaScript Algorithms & Data Structures",
-    issuer: "freeCodeCamp",
-    id: "FCC-JSADS-5C02",
-    href: "#",
+    date: "Sep 2025",
+    title: "Microsoft Certified: Azure Fundamentals",
+    issuer: "Microsoft",
+    id: "971B26F4C3A4256",
+    href: "https://learn.microsoft.com/en-us/users/ajaykumara-5300/credentials/certification/azure-fundamentals?tab=credentials-tab",
   },
 ];
 
