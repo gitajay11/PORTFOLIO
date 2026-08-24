@@ -241,10 +241,10 @@ export default function ContactHero() {
         )}
 
         <div className="chero__overlay">
-          <p className="hero__kicker">
+          <p className="hero__kicker chero__kicker--left">
             <span className="dot" /> let&rsquo;s connect
           </p>
-          <p className="interlude__text chero__heading">
+          <p className="interlude__text chero__heading chero__heading--right">
             Got something
             <br />
             worth <em>building</em>?

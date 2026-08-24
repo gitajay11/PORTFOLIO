@@ -4,27 +4,74 @@ import { useState, type FormEvent } from "react";
 import { profile } from "@/lib/content";
 
 /**
- * No backend wired up — submitting builds a mailto: link and hands off to
- * the visitor's own mail app. Honest about that in the copy below rather
- * than claiming a "message sent" state nothing actually sent. Swap this
- * for a real POST to an API route if/when there's an email service
- * (Resend, SendGrid, etc.) configured to send on the server instead.
+ * Submits to Formspree (https://formspree.io/f/mvkpjooa) via fetch + FormData
+ * rather than a native form POST, so a send never navigates away from the
+ * page — the status message below the button is the only feedback, matching
+ * the rest of this site's inline, no-page-reload interactions (the chat
+ * widget works the same way).
  */
+const FORM_ENDPOINT = "https://formspree.io/f/mvkpjooa";
+
+type Status = "idle" | "sending" | "sent" | "error";
+
 export default function ContactForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
-  const [opening, setOpening] = useState(false);
+  const [status, setStatus] = useState<Status>("idle");
+  const [errorDetail, setErrorDetail] = useState("");
 
-  const onSubmit = (e: FormEvent) => {
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !email.trim() || !message.trim()) return;
+    if (!name.trim() || !email.trim() || !message.trim() || status === "sending") return;
 
-    const subject = encodeURIComponent(`Portfolio message from ${name.trim()}`);
-    const body = encodeURIComponent(`${message.trim()}\n\n— ${name.trim()} (${email.trim()})`);
-    setOpening(true);
-    window.location.href = `mailto:${profile.email}?subject=${subject}&body=${body}`;
+    setStatus("sending");
+    setErrorDetail("");
+
+    const body = new FormData();
+    body.set("name", name.trim());
+    body.set("email", email.trim());
+    if (phone.trim()) body.set("phone", phone.trim());
+    body.set("message", message.trim());
+    body.set("_subject", `Portfolio message from ${name.trim()}`);
+
+    try {
+      const res = await fetch(FORM_ENDPOINT, {
+        method: "POST",
+        headers: { Accept: "application/json" },
+        body,
+      });
+
+      if (res.ok) {
+        setStatus("sent");
+        setName("");
+        setEmail("");
+        setPhone("");
+        setMessage("");
+        return;
+      }
+
+      // Formspree returns 4xx with a JSON { errors: [{ message }] } body on
+      // things like a malformed address — surface that instead of a bare
+      // "something went wrong" when it's available.
+      const data = await res.json().catch(() => null);
+      setErrorDetail(data?.errors?.map((e: { message: string }) => e.message).join(" ") ?? "");
+      setStatus("error");
+    } catch {
+      setStatus("error");
+    }
   };
+
+  if (status === "sent") {
+    return (
+      <div className="cform cform--sent">
+        <p className="cform__sent">
+          Message sent — thanks, {name || "I"}&rsquo;ll get back to you soon.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <form className="cform" onSubmit={onSubmit}>
@@ -38,6 +85,7 @@ export default function ContactForm() {
             onChange={(e) => setName(e.target.value)}
             placeholder="Your name"
             autoComplete="name"
+            disabled={status === "sending"}
           />
         </label>
         <label className="cform__field">
@@ -49,6 +97,18 @@ export default function ContactForm() {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
             autoComplete="email"
+            disabled={status === "sending"}
+          />
+        </label>
+        <label className="cform__field">
+          <span>Phone (optional)</span>
+          <input
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="+91 98765 43210"
+            autoComplete="tel"
+            disabled={status === "sending"}
           />
         </label>
       </div>
@@ -61,17 +121,19 @@ export default function ContactForm() {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="What are you building?"
+          disabled={status === "sending"}
         />
       </label>
 
       <div className="cform__foot">
-        <button type="submit" className="cform__submit">
-          Send message <span>&#8599;</span>
+        <button type="submit" className="cform__submit" disabled={status === "sending"}>
+          {status === "sending" ? "Sending…" : "Send message"}
+          {status !== "sending" && <span>&#8599;</span>}
         </button>
-        <p className="cform__note">
-          {opening
-            ? "Opening your email app to finish sending…"
-            : `Opens your email app, addressed to ${profile.email}.`}
+        <p className={`cform__note${status === "error" ? " cform__note--error" : ""}`}>
+          {status === "error"
+            ? errorDetail || `Something went wrong — email him directly at ${profile.email} instead.`
+            : `Goes straight to ${profile.shortName}.`}
         </p>
       </div>
     </form>

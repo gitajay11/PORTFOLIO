@@ -17,7 +17,7 @@ components/
   ScrollVideoBackground.tsx   the fixed, whole-document video layer (every
                               route except /contact — see below)
   ContactHero.tsx             /contact's own bounded, local video hero
-  ContactForm.tsx             the contact form (no backend — see below)
+  ContactForm.tsx             the contact form, posts to Formspree
   ContactDirect.tsx           the direct-email block under the hero
   Reveal.tsx / Counter.tsx    scroll-triggered animations
   Nav / Hero / Interlude / About / Stack / Work / Path / Footer
@@ -65,15 +65,33 @@ numbers were derived) but computes progress from the track element's own
 self-contained measurement, not a shared module, since only this one page
 needs it.
 
-### The contact form has no backend
+### The hero text splits left/right on desktop
 
-`ContactForm.tsx` validates the fields, then hands off to a `mailto:` link —
-the visitor's own mail app sends it, addressed to `profile.email`. Nothing on
-this server processes or stores it. The UI is honest about that: the note
-under the button says "opens your email app," never "message sent." If you
-want real server-side delivery, add an API route (same pattern as
-`app/api/chat/route.ts`) backed by a transactional email service such as
-Resend or SendGrid, and swap the form's submit handler to `fetch` it.
+`ContactHero`'s kicker ("let's connect") and heading ("Got something worth
+building?") sit at opposite edges of the screen on desktop — a plain flex row
+with two children naturally pushes them apart via `justify-content:
+space-between`. That only works with room to breathe; below 900px it reverts
+to the original stacked, centered layout (see the `@media` override in
+`globals.css`), since a wide split at phone width leaves both pieces cramped
+against their own edge.
+
+### The contact form posts to Formspree
+
+`ContactForm.tsx` submits via `fetch` + `FormData` to
+`https://formspree.io/f/mvkpjooa` — a real submission, not a `mailto:`
+handoff, so it needed real status states: `sending` while in flight, `sent`
+with a confirmation banner (fields clear), `error` with Formspree's own
+validation message when available, falling back to "email him directly"
+otherwise. Posting with `Accept: application/json` gets a JSON response
+instead of Formspree's default redirect, which is what makes the inline
+states possible — no navigating away to a Formspree-hosted thank-you page.
+`FormData` as the body needs no manual `Content-Type` header; the browser
+sets the correct multipart boundary itself.
+
+To point this at a different Formspree form (or swap providers entirely),
+edit `FORM_ENDPOINT` at the top of `ContactForm.tsx` — everything else about
+the component is provider-agnostic aside from that one URL and the response
+shape it expects.
 
 Internal navigation is plain `<a>` tags throughout — this project doesn't use
 `next/link` anywhere, on purpose, to keep it framework-light. That means

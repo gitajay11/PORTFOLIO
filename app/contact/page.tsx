@@ -17,7 +17,7 @@ export default function ContactPage() {
       <ContactDirect />
 
       <section className="section section--alt" id="message">
-        <div className="wrap">
+        <div className="wrap wrap--center">
           <Reveal>
             <p className="eyebrow">message</p>
           </Reveal>
@@ -25,9 +25,8 @@ export default function ContactPage() {
             <h2 className="h2">Or write it out.</h2>
           </Reveal>
           <Reveal delay={110}>
-            <p className="lead">
-              Prefer typing over talking? This opens straight in your email
-              app, addressed and ready.
+            <p className="lead lead--center">
+              Prefer typing over talking? Send it straight from here.
             </p>
           </Reveal>
           <Reveal delay={150}>
