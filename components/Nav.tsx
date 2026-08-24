@@ -97,7 +97,7 @@ export default function Nav() {
               </a>
             );
           })}
-          <a className="nav__cta" href={homeHref("contact")}>
+          <a className="nav__cta" href="/contact">
             contact
           </a>
         </nav>

@@ -9,13 +9,18 @@ app/
   page.tsx                            homepage section composition
   globals.css                         tokens, layout, responsive
   api/chat/route.ts                   the assistant's server endpoint
+  contact/page.tsx                    hero + direct contact + form
   education/page.tsx                  hub — links to the two pages below
   education/qualification/page.tsx    standalone page
   education/certifications/page.tsx   standalone page
 components/
-  ScrollVideoBackground.tsx   the fixed, scroll-scrubbed video layer
+  ScrollVideoBackground.tsx   the fixed, whole-document video layer (every
+                              route except /contact — see below)
+  ContactHero.tsx             /contact's own bounded, local video hero
+  ContactForm.tsx             the contact form (no backend — see below)
+  ContactDirect.tsx           the direct-email block under the hero
   Reveal.tsx / Counter.tsx    scroll-triggered animations
-  Nav / Hero / Interlude / About / Stack / Work / Path / Contact / Footer
+  Nav / Hero / Interlude / About / Stack / Work / Path / Footer
   Qualification / Certifications (+ CertificateCard) / EducationHub (+ HubTile)
 lib/
   content.ts        ALL site copy — edit here
@@ -28,7 +33,8 @@ legacy-static/      the original no-framework version, kept for reference
 
 | Path | Renders |
 | --- | --- |
-| `/` | The single-page scroll: hero → about → stack → work → path → contact |
+| `/` | The single-page scroll: hero → about → stack → work → path |
+| `/contact` | Bounded video hero → direct email/socials → contact form |
 | `/education` | Hub — two link-tiles out to the pages below |
 | `/education/qualification` | The school-to-degree timeline (was inline on the homepage; moved out and renamed) |
 | `/education/certifications` | The completed-certificates grid |
@@ -39,6 +45,35 @@ every route above, not just the homepage. The video re-measures the current
 page's scroll height on every navigation (`ResizeObserver` + a plain scroll
 listener), so it scrubs correctly whether the current document is the long
 homepage or a short standalone page.
+
+### /contact's video is different on purpose
+
+Every other route gets `ScrollVideoBackground` — the video fixed behind the
+*whole* document. `/contact` explicitly doesn't: `ScrollVideoBackground`
+checks `usePathname()` and renders nothing there, and `ContactHero.tsx` shows
+its own bounded, local scroll-scrub instead — a 240vh (190vh on mobile) track
+with a sticky video that releases once you've scrolled past it, closer to how
+this project's hero worked originally (see `legacy-static/`) before the
+whole-page treatment. Deliberately simpler than `ScrollVideoBackground`: no
+side-vs-stacked layout logic, since a short line of text doesn't need a
+clear column next to the subject the way "AJAY KUMAR" did.
+
+It shares the source video, the black-point filter, and the watermark-patch
+math with `ScrollVideoBackground` (see that file's comments for how those
+numbers were derived) but computes progress from the track element's own
+`getBoundingClientRect()` instead of whole-document scroll — a different,
+self-contained measurement, not a shared module, since only this one page
+needs it.
+
+### The contact form has no backend
+
+`ContactForm.tsx` validates the fields, then hands off to a `mailto:` link —
+the visitor's own mail app sends it, addressed to `profile.email`. Nothing on
+this server processes or stores it. The UI is honest about that: the note
+under the button says "opens your email app," never "message sent." If you
+want real server-side delivery, add an API route (same pattern as
+`app/api/chat/route.ts`) backed by a transactional email service such as
+Resend or SendGrid, and swap the form's submit handler to `fetch` it.
 
 Internal navigation is plain `<a>` tags throughout — this project doesn't use
 `next/link` anywhere, on purpose, to keep it framework-light. That means

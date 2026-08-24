@@ -1,7 +1,16 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { subscribeToScroll } from "@/lib/scrollProgress";
+
+/**
+ * Routes that render their own local, bounded video hero (see ContactHero)
+ * instead of this whole-document background. Kept as a route allowlist-of-
+ * exclusions rather than inverting the check, since every other current and
+ * future route should get the global treatment by default.
+ */
+const ROUTES_WITHOUT_GLOBAL_VIDEO = ["/contact"];
 
 /**
  * Full-page scroll-scrubbed video background.
@@ -79,6 +88,9 @@ const TITLE_EM_WIDTH = 3.35;
 const topInsetFor = (h: number) => Math.min(68, Math.max(20, h * 0.055));
 
 export default function ScrollVideoBackground() {
+  const pathname = usePathname();
+  const suppressed = ROUTES_WITHOUT_GLOBAL_VIDEO.includes(pathname);
+
   const videoRef = useRef<HTMLVideoElement>(null);
   const layerRef = useRef<HTMLDivElement>(null);
   const patchRef = useRef<HTMLDivElement>(null);
@@ -313,6 +325,12 @@ export default function ScrollVideoBackground() {
       mq.removeEventListener("change", layout);
     };
   }, []);
+
+  // After all hooks, never before — this only changes what renders, not
+  // how many hooks run, so it doesn't violate the rules of hooks. The
+  // effects above still fire on a suppressed route; they no-op harmlessly
+  // since videoRef/layerRef never attach to anything.
+  if (suppressed) return null;
 
   return (
     <>

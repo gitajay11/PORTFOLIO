@@ -1,5 +1,4 @@
 import About from "@/components/About";
-import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
 import Interlude from "@/components/Interlude";
@@ -20,7 +19,6 @@ export default function Home() {
       <Work />
       <Interlude {...heroStages[1]} />
       <Path />
-      <Contact />
       <Footer />
     </main>
   );
