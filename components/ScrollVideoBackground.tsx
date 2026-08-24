@@ -205,11 +205,15 @@ export default function ScrollVideoBackground() {
       let ticking = false;
       const measure = () => {
         if (!box) return;
+        // The box is the very first thing on the page, not an element
+        // further down that scrolls up into view — so progress runs from
+        // scrollY 0 (top of page) to scrollY == the box's own document
+        // offset + its height (fully scrolled past), not from "viewport
+        // height" the way an in-page element's reveal would.
         const rect = box.getBoundingClientRect();
-        const vh = window.innerHeight;
-        const total = vh + rect.height;
-        const traveled = vh - rect.top;
-        const p = total > 0 ? Math.min(1, Math.max(0, traveled / total)) : 0;
+        const docTop = rect.top + window.scrollY;
+        const total = docTop + rect.height;
+        const p = total > 0 ? Math.min(1, Math.max(0, window.scrollY / total)) : 0;
         target.current = p * duration.current;
       };
       const onScroll = () => {

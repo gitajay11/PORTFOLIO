@@ -1957,9 +1957,30 @@ ol {
 @media (max-width: 899px) {
   /* The video is no longer behind .hero here (see .mvid above) — the
      --face-bottom clearance it published doesn't correspond to anything on
-     this section any more, so a fixed value replaces it. */
+     this section any more, so a fixed value replaces it. min-height:100vh
+     and margin-top:auto on .hero__inner both existed to center content
+     against a full-screen video background; without that background they
+     just leave a huge empty gap above the text, so content now sits close
+     to the top instead, and the section is auto-height. The bottom padding
+     is a fixed 130px (not the vh-based clamp the desktop rule uses) so
+     .scrollhint — position:absolute, bottom:58px, ~34px tall — always has
+     room beneath the role line instead of risking an overlap now that this
+     section no longer reserves a full screen height. */
   .hero {
-    padding: 96px 24px clamp(48px, 8vh, 150px);
+    min-height: auto;
+    padding: 96px 24px 130px;
+  }
+  .hero__inner {
+    margin-top: 0;
+  }
+
+  /* Same story: .interlude is a transparent statement meant to sit over
+     the background video, which mobile no longer has behind it — 88vh of
+     near-empty space around a couple of short lines reads as a huge gap
+     rather than a considered pause. */
+  .interlude {
+    min-height: auto;
+    padding: 64px 24px;
   }
 }
 @media (max-width: 900px) {
