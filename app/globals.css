@@ -154,7 +154,7 @@ body.intro-lock {
   display: inline-block;
   width: 0.5em;
   height: 0.85em;
-  background: var(--accent-2);
+  background: var(--accent);
   vertical-align: -0.1em;
   margin-left: 2px;
   animation: introBlink 0.9s step-end infinite;
