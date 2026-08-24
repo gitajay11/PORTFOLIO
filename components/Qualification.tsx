@@ -1,4 +1,8 @@
+"use client";
+
+import { useState } from "react";
 import { qualifications } from "@/lib/content";
+import QualificationLightbox from "./QualificationLightbox";
 import Reveal from "./Reveal";
 
 const ICONS = {
@@ -18,6 +22,8 @@ const ICONS = {
 
 /** /education/qualification — the school-to-degree timeline. */
 export default function Qualification() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
   return (
     <section className="section" id="qualification">
       <div className="wrap">
@@ -41,7 +47,7 @@ export default function Qualification() {
 
         <ol className="qual">
           {qualifications.map((item, i) => (
-            <li key={item.years}>
+            <li key={item.years + item.school}>
               <Reveal delay={i * 60}>
                 <div className="qual__item">
                   <span className="qual__node" aria-hidden="true">
@@ -59,6 +65,20 @@ export default function Qualification() {
                       {item.score.split(" ").slice(1).join(" ")}
                     </span>
                     <span className="qual__loc">{item.location}</span>
+                    {item.image && (
+                      <button
+                        type="button"
+                        className="qual__view"
+                        onClick={() => setOpenIndex(i)}
+                        aria-label={`View the ${item.school} certificate`}
+                      >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                          <rect x="3" y="4.5" width="18" height="15" rx="2" />
+                          <circle cx="8.5" cy="10" r="1.6" />
+                          <path d="m4 16.5 5-4.5 3.5 3 4-4L20 15" />
+                        </svg>
+                      </button>
+                    )}
                   </div>
                 </div>
               </Reveal>
@@ -66,6 +86,19 @@ export default function Qualification() {
           ))}
         </ol>
       </div>
+
+      {openIndex !== null && qualifications[openIndex].image && (
+        <QualificationLightbox
+          qual={{
+            school: qualifications[openIndex].school,
+            field: qualifications[openIndex].field,
+            years: qualifications[openIndex].years,
+            score: qualifications[openIndex].score,
+            image: qualifications[openIndex].image!,
+          }}
+          onClose={() => setOpenIndex(null)}
+        />
+      )}
     </section>
   );
 }

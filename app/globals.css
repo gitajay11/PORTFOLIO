@@ -1328,6 +1328,37 @@ ol {
 .qual__loc::before {
   content: "· ";
 }
+/* Opens the qualification certificate in the lightbox — same interaction
+   language as .cert__view on the certifications page. */
+.qual__view {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  margin-left: 2px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--fg-mid);
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+.qual__view svg {
+  width: 13px;
+  height: 13px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.qual__view:hover,
+.qual__view:focus-visible {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-glow);
+}
 
 /* =========================================================
    CERTIFICATIONS — a browsable grid, not a ranked sequence, so

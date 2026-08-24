@@ -39,7 +39,7 @@ export default function About() {
                   <span className="c-str">&quot;Full-stack Developer&quot;</span>,
                   {"\n  "}
                   <span className="c-prop">based</span>:{" "}
-                  <span className="c-str">&quot;India&quot;</span>,
+                  <span className="c-str">&quot;Chennai, Tamil Nadu&quot;</span>,
                   {"\n  "}
                   <span className="c-prop">focus</span>: [
                   <span className="c-str">&quot;web performance&quot;</span>,{" "}
