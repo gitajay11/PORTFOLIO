@@ -3,7 +3,7 @@
  * that renders the page — so the bot can't drift from the site.
  *
  * Two consumers:
- *  - the API route, which sends `systemPrompt()` to Claude;
+ *  - the API route, which sends `systemPrompt()` to Groq's chat model;
  *  - the browser, which falls back to `localAnswer()` when the route is
  *    unavailable (no API key configured, or a static host with no server).
  */

@@ -1,4 +1,4 @@
-import Anthropic from "@anthropic-ai/sdk";
+import Groq from "groq-sdk";
 import { NextResponse } from "next/server";
 import { MAX_QUESTION_LENGTH, systemPrompt } from "@/lib/chatKnowledge";
 
@@ -6,8 +6,10 @@ export const runtime = "nodejs";
 /** The assistant is live, so never let a response get cached. */
 export const dynamic = "force-dynamic";
 
+/** Fast, general-purpose, and current on Groq — good fit for short grounded Q&A. */
+const MODEL = "llama-3.3-70b-versatile";
 /** Deliberately small: replies are chat bubbles, two or three sentences. */
-const MAX_TOKENS = 512;
+const MAX_COMPLETION_TOKENS = 512;
 /** Cap the history the browser can push, so one visitor can't run up a bill. */
 const MAX_TURNS = 12;
 
@@ -24,7 +26,7 @@ function isTurn(value: unknown): value is Turn {
 export async function POST(request: Request) {
   // No key configured — tell the client to use its offline answers rather
   // than failing. This keeps the widget useful on a purely static deploy.
-  if (!process.env.ANTHROPIC_API_KEY) {
+  if (!process.env.GROQ_API_KEY) {
     return NextResponse.json({ fallback: true }, { status: 503 });
   }
 
@@ -40,7 +42,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Malformed request." }, { status: 400 });
   }
 
-  const trimmed: Anthropic.MessageParam[] = messages
+  const trimmed: Groq.Chat.ChatCompletionMessageParam[] = messages
     .slice(-MAX_TURNS)
     .map((t) => ({
       role: t.role,
@@ -52,45 +54,33 @@ export async function POST(request: Request) {
   }
 
   try {
-    const client = new Anthropic();
+    const client = new Groq();
 
-    const response = await client.messages.create({
-      model: "claude-opus-5",
-      max_tokens: MAX_TOKENS,
-      // Simple grounded Q&A — low effort keeps it fast and cheap.
-      output_config: { effort: "low" },
-      system: [
-        {
-          type: "text",
-          text: systemPrompt(),
-          // The prompt is byte-identical on every request, so it caches.
-          cache_control: { type: "ephemeral" },
-        },
-      ],
-      messages: trimmed,
+    // Groq's API is OpenAI-compatible: there's no separate top-level `system`
+    // parameter like Anthropic's — the system prompt is just the first
+    // message in the array.
+    const response = await client.chat.completions.create({
+      model: MODEL,
+      max_completion_tokens: MAX_COMPLETION_TOKENS,
+      temperature: 0.4,
+      messages: [{ role: "system", content: systemPrompt() }, ...trimmed],
     });
 
-    if (response.stop_reason === "refusal") {
-      return NextResponse.json({
-        reply: "I can't help with that one. Ask me about Ajay's work instead.",
-      });
-    }
-
-    const reply = response.content
-      .filter((block): block is Anthropic.TextBlock => block.type === "text")
-      .map((block) => block.text)
-      .join("")
-      .trim();
+    // Groq's finish_reason union doesn't carry a distinct "refused" state the
+    // way Anthropic's stop_reason does — off-topic questions are handled by
+    // the system prompt's own instructions instead, same as the offline
+    // fallback rules. An empty reply is the only thing left to guard here.
+    const reply = response.choices[0]?.message?.content?.trim();
 
     if (!reply) return NextResponse.json({ fallback: true }, { status: 503 });
 
     return NextResponse.json({ reply });
   } catch (error) {
-    if (error instanceof Anthropic.AuthenticationError) {
+    if (error instanceof Groq.AuthenticationError) {
       // A bad key is a deploy problem, not a visitor problem — degrade quietly.
       return NextResponse.json({ fallback: true }, { status: 503 });
     }
-    if (error instanceof Anthropic.RateLimitError) {
+    if (error instanceof Groq.RateLimitError) {
       return NextResponse.json(
         { error: "Getting a lot of questions right now — try again in a moment." },
         { status: 429 }
