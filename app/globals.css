@@ -1497,25 +1497,53 @@ ol {
    RESPONSIVE
    ========================================================= */
 @media (max-width: 900px) {
+  /* A short list centered in a tall viewport left ~225px of dead black
+     space above and below it. Left-aligned rows with dividers — closer to
+     the site's own terminal/index-listing language (see .eyebrow, .project)
+     — read as a designed menu instead of floating text, and top-anchoring
+     puts any leftover space at the bottom, not split awkwardly on both
+     sides. */
   .nav__links {
     position: fixed;
-    inset: 0 0 auto;
-    top: 0;
+    inset: 0;
     flex-direction: column;
-    justify-content: center;
-    gap: 30px;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 0;
     height: 100vh;
     height: 100svh;
+    padding: 108px 28px 40px;
     background: rgba(0, 0, 0, 0.94);
     backdrop-filter: blur(18px);
     transform: translateY(-100%);
     transition: transform 0.55s var(--ease);
+    overflow-y: auto;
   }
   .nav__links.is-open {
     transform: translateY(0);
   }
   .nav__links a {
-    font-size: 20px;
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    padding: 20px 2px;
+    border-bottom: 1px solid var(--line-soft);
+    font-size: 24px;
+    letter-spacing: -0.01em;
+  }
+  /* At 20px+ body text the base 11px number read as an afterthought
+     (0.55x the link size, vs. 0.81x on desktop) — sized up to match. */
+  .nav__links .nav__num {
+    font-size: 13px;
+    letter-spacing: 1px;
+    margin-right: 0;
+    flex: none;
+  }
+  .nav__links .nav__cta {
+    align-self: flex-start;
+    margin-top: 28px;
+    border-bottom: none;
+    padding: 13px 26px;
   }
   .nav__burger {
     display: flex;
