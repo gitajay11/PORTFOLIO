@@ -5,16 +5,15 @@ import { useEffect, useState } from "react";
 
 /**
  * Full-screen typewriter splash, played once whenever you land on the
- * homepage — same mechanism as the equivalent intro on forgebyte.online
- * (IntroOverlay.tsx there), adapted: colors map to this site's own tokens,
- * and the words are Ajay's own line from About ("small, boring, reliable
- * systems") rather than Forgebyte's tagline. Suppressed on every other
+ * homepage — same mechanism and same words (ABI, "Architecting Bold
+ * Ideas") as the equivalent intro on forgebyte.online (IntroOverlay.tsx
+ * there); colors map to this site's own tokens. Suppressed on every other
  * route, the same way ScrollVideoBackground suppresses itself on /contact.
  */
 const WORDS = [
-  { first: "S", rest: "mall" },
-  { first: "B", rest: "oring" },
-  { first: "R", rest: "eliable" },
+  { first: "A", rest: "rchitecting" },
+  { first: "B", rest: "old" },
+  { first: "I", rest: "deas" },
 ] as const;
 
 const TYPE_SPEED = 34;
