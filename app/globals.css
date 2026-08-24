@@ -1416,6 +1416,127 @@ ol {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+/* Opens the certificate image in the lightbox — replaces the old "verify"
+   text link; verifying is still one click away, inside the lightbox. */
+.cert__view {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  margin: -4px -4px -4px 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--fg-mid);
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+.cert__view svg {
+  width: 15px;
+  height: 15px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.cert__view:hover,
+.cert__view:focus-visible {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-glow);
+}
+
+/* =========================================================
+   CERTIFICATE LIGHTBOX — full-screen preview opened from a
+   card's .cert__view button (see CertificateGrid.tsx).
+   ========================================================= */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: clamp(20px, 6vw, 64px);
+  background: rgba(0, 0, 0, 0.86);
+  backdrop-filter: blur(10px);
+  animation: lightboxIn 0.25s var(--ease) both;
+}
+@keyframes lightboxIn {
+  from {
+    opacity: 0;
+  }
+}
+.lightbox__close {
+  position: fixed;
+  top: clamp(16px, 3vw, 28px);
+  right: clamp(16px, 3vw, 28px);
+  z-index: 2;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.6);
+  color: var(--fg);
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+.lightbox__close:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.lightbox__frame {
+  position: relative;
+  display: grid;
+  gap: 16px;
+  max-width: min(920px, 100%);
+  max-height: 100%;
+  animation: lightboxScaleIn 0.3s var(--ease) both;
+}
+@keyframes lightboxScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(8px);
+  }
+}
+.lightbox__img {
+  width: 100%;
+  max-height: 72vh;
+  object-fit: contain;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: #fff;
+  box-shadow: 0 40px 90px -30px rgba(0, 0, 0, 0.9);
+}
+.lightbox__caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+}
+.lightbox__caption strong {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.lightbox__caption span {
+  display: block;
+  margin-top: 4px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--fg-dim);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lightbox,
+  .lightbox__frame {
+    animation: none;
+  }
+}
 
 @media (max-width: 900px) {
   .qual {

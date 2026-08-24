@@ -169,8 +169,11 @@ export const qualifications = [
  * Lives at /education/certifications.
  *
  * `href` links are the verify URLs printed on each certificate (Credly for
- * the Anthropic ones, Microsoft Learn for the Microsoft ones) — real,
- * not placeholders.
+ * the Anthropic ones, Microsoft Learn for the Microsoft ones) — real, not
+ * placeholders. `image` is a rendering of the certificate itself (first PDF
+ * page, rasterized — see README) shown in the lightbox when its card's
+ * image icon is clicked; the Microsoft ones are cropped to the card, since
+ * the source PDFs are full browser print-outs with chrome and dead space.
  */
 export const certificates = [
   {
@@ -181,6 +184,7 @@ export const certificates = [
     issuer: "Anthropic",
     id: "CREDLY-E4C89032",
     href: "https://www.credly.com/badges/e4c89032-c68c-4b2b-be9a-953350b97ab0",
+    image: "/certificates/claude-associate-foundations.jpg",
   },
   {
     badge: "AI",
@@ -190,6 +194,7 @@ export const certificates = [
     issuer: "Anthropic",
     id: "CREDLY-229CA9AF",
     href: "https://www.credly.com/badges/229ca9af-e3c1-49df-96b2-e4d51cc44bb6",
+    image: "/certificates/claude-architect-professional.jpg",
   },
   {
     badge: "AI",
@@ -199,6 +204,7 @@ export const certificates = [
     issuer: "Anthropic",
     id: "CREDLY-02FA97FC",
     href: "https://www.credly.com/badges/02fa97fc-0a2f-4069-bf88-d041392e9e63",
+    image: "/certificates/claude-developer-foundations.jpg",
   },
   {
     badge: "AI",
@@ -208,6 +214,7 @@ export const certificates = [
     issuer: "Anthropic",
     id: "CREDLY-6C60AD33",
     href: "https://www.credly.com/badges/6c60ad33-9ff5-4583-b23f-9d7f6435dc19",
+    image: "/certificates/claude-architect-foundations.jpg",
   },
   {
     badge: "MS",
@@ -217,6 +224,7 @@ export const certificates = [
     issuer: "Microsoft",
     id: "5D3E9AA3FE808AAD",
     href: "https://learn.microsoft.com/en-us/users/ajaykumara-5300/credentials/certification/fabric-data-engineer-associate?tab=credentials-tab",
+    image: "/certificates/fabric-data-engineer-associate.jpg",
   },
   {
     badge: "MS",
@@ -226,6 +234,7 @@ export const certificates = [
     issuer: "Microsoft",
     id: "971B26F4C3A4256",
     href: "https://learn.microsoft.com/en-us/users/ajaykumara-5300/credentials/certification/azure-fundamentals?tab=credentials-tab",
+    image: "/certificates/azure-fundamentals.jpg",
   },
 ];
 

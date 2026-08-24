@@ -1,5 +1,4 @@
-import { certificates } from "@/lib/content";
-import CertificateCard from "./CertificateCard";
+import CertificateGrid from "./CertificateGrid";
 import Reveal from "./Reveal";
 
 /** /education/certifications — the completed-certificates grid. */
@@ -21,17 +20,12 @@ export default function Certifications() {
         </Reveal>
         <Reveal delay={110}>
           <p className="lead">
-            Courses and exams finished end to end — not just started.
+            Courses and exams finished end to end — not just started. Tap the
+            image icon on any card to see the certificate itself.
           </p>
         </Reveal>
 
-        <div className="certs">
-          {certificates.map((cert, i) => (
-            <Reveal key={cert.id} delay={i * 60}>
-              <CertificateCard {...cert} />
-            </Reveal>
-          ))}
-        </div>
+        <CertificateGrid />
       </div>
     </section>
   );

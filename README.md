@@ -313,8 +313,22 @@ each document. The source PDFs live in `/certificates` locally but aren't
 committed (`.gitignore`) — the site doesn't need to serve them, everything it
 uses from them is already in `content.ts`, and there's no reason to publish
 personal credential documents to a public repo when a link already verifies
-each one. Add new certificates by dropping a PDF in that folder and adding
-the corresponding entry to the array; nothing else reads the folder.
+each one.
+
+Each card shows an image icon instead of a "verify" link — click it to open
+the certificate itself in a full-screen lightbox (`CertificateGrid.tsx` /
+`CertificateLightbox.tsx`); the verify link still lives inside the lightbox,
+opening in a new tab. The images in `public/certificates/*.jpg` are
+rasterized from the first page of each source PDF — the Microsoft ones are
+additionally cropped, since those particular PDFs are full browser
+print-outs (chrome, dead space) rather than a purpose-made single-page
+certificate like the Anthropic ones.
+
+To add another certificate: drop the PDF in `/certificates`, rasterize page 1
+to a JPEG in `public/certificates/` (any PDF-to-image tool works — this
+project doesn't keep one installed, since it's a one-time step, not something
+the app needs at runtime), and add the matching entry — including `image` —
+to the `certificates` array. Nothing else reads the `/certificates` folder.
 
 ## Notes
 
