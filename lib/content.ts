@@ -126,11 +126,12 @@ export const timeline = [
 ];
 
 /**
- * Education, newest first — same convention as `timeline`. `icon` picks
- * the timeline-node glyph in Education.tsx: "cap" for degrees, "book"
- * for school stages.
+ * Qualifications (school → degree), newest first — same convention as
+ * `timeline`. `icon` picks the timeline-node glyph in Qualification.tsx:
+ * "cap" for degrees, "book" for school stages. Lives at
+ * /education/qualification.
  */
-export const education = [
+export const qualifications = [
   {
     icon: "cap" as const,
     stage: "Bachelor's",
@@ -163,7 +164,7 @@ export const education = [
 /**
  * Completed certifications, newest first. `accent` picks the card's badge
  * color ("green" | "blue") purely for visual rhythm across the grid —
- * it carries no other meaning.
+ * it carries no other meaning. Lives at /education/certifications.
  */
 export const certificates = [
   {
@@ -229,11 +230,17 @@ export const socials = [
   { label: "Résumé", href: "#" },
 ];
 
+/**
+ * Sections rendered as anchors on the homepage. `education` is a real
+ * route instead: /education is a hub linking out to the standalone
+ * /education/qualification and /education/certifications pages, so it
+ * carries an explicit `href` and Nav.tsx treats it differently — a plain
+ * link rather than a same-page `#id` anchor.
+ */
 export const navSections = [
   { num: "01", id: "about", label: "about" },
   { num: "02", id: "stack", label: "stack" },
   { num: "03", id: "work", label: "work" },
   { num: "04", id: "path", label: "path" },
-  { num: "05", id: "education", label: "education" },
-  { num: "06", id: "certifications", label: "certs" },
-];
+  { num: "05", id: "education", label: "education", href: "/education" },
+] as const;

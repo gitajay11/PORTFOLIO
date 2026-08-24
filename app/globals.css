@@ -706,6 +706,18 @@ ol {
   padding-right: 10px;
   border-right: 1px solid var(--line);
 }
+/* Breadcrumb link back to the parent /education hub, used on the
+   standalone Qualification and Certification pages. */
+.eyebrow__crumb {
+  color: var(--fg-dim);
+  transition: color 0.2s;
+}
+.eyebrow__crumb:hover {
+  color: var(--accent);
+}
+.eyebrow__sep {
+  color: var(--line);
+}
 
 .h2 {
   font-size: clamp(2rem, 5.2vw, 3.6rem);
@@ -1082,16 +1094,17 @@ ol {
 }
 
 /* =========================================================
-   EDUCATION — vertical timeline, newest first (same convention
-   as .timeline/.tl above). Order carries the information here,
-   so the spine + year rail replace numbering.
+   QUALIFICATION — vertical timeline, newest first (same
+   convention as .timeline/.tl above). Order carries the
+   information here, so the spine + year rail replace numbering.
+   Standalone page at /education/qualification.
    ========================================================= */
-.edu {
+.qual {
   position: relative;
   padding-left: 30px;
   max-width: 760px;
 }
-.edu::before {
+.qual::before {
   content: "";
   position: absolute;
   left: 0;
@@ -1100,14 +1113,14 @@ ol {
   width: 1px;
   background: linear-gradient(180deg, var(--accent), var(--line) 55%, transparent);
 }
-.edu__item {
+.qual__item {
   position: relative;
   padding: 0 0 40px 28px;
 }
-.edu li:last-child .edu__item {
+.qual li:last-child .qual__item {
   padding-bottom: 0;
 }
-.edu__node {
+.qual__node {
   position: absolute;
   left: -35px;
   top: 3px;
@@ -1121,7 +1134,7 @@ ol {
   color: var(--accent);
   transition: border-color 0.3s, box-shadow 0.3s;
 }
-.edu__node svg {
+.qual__node svg {
   width: 12px;
   height: 12px;
   stroke: currentColor;
@@ -1130,18 +1143,18 @@ ol {
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.edu__item:hover .edu__node {
+.qual__item:hover .qual__node {
   border-color: var(--accent);
   box-shadow: 0 0 0 5px var(--accent-glow);
 }
-.edu__head {
+.qual__head {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
   gap: 10px 14px;
   margin-bottom: 6px;
 }
-.edu__stage {
+.qual__stage {
   font-family: var(--mono);
   font-size: 10.5px;
   letter-spacing: 1.6px;
@@ -1151,34 +1164,34 @@ ol {
   border: 1px solid var(--line);
   border-radius: 999px;
 }
-.edu__years {
+.qual__years {
   font-family: var(--mono);
   font-size: 11.5px;
   letter-spacing: 1px;
   color: var(--accent);
   font-variant-numeric: tabular-nums;
 }
-.edu__school {
+.qual__school {
   font-size: 1.28rem;
   font-weight: 600;
   letter-spacing: -0.02em;
   margin-bottom: 5px;
   text-shadow: var(--tshadow);
 }
-.edu__field {
+.qual__field {
   color: var(--fg-mid);
   font-size: 0.96rem;
   margin-bottom: 12px;
   max-width: 52ch;
   text-shadow: var(--tshadow);
 }
-.edu__meta {
+.qual__meta {
   display: flex;
   flex-wrap: wrap;
   gap: 8px 10px;
   align-items: center;
 }
-.edu__score {
+.qual__score {
   display: inline-flex;
   align-items: baseline;
   gap: 6px;
@@ -1190,7 +1203,7 @@ ol {
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.02);
 }
-.edu__score b {
+.qual__score b {
   display: inline-grid;
   place-items: center;
   padding: 2px 7px;
@@ -1200,19 +1213,20 @@ ol {
   font-weight: 600;
   font-size: 10.5px;
 }
-.edu__loc {
+.qual__loc {
   font-family: var(--mono);
   font-size: 11px;
   color: var(--fg-dim);
 }
-.edu__loc::before {
+.qual__loc::before {
   content: "· ";
 }
 
 /* =========================================================
    CERTIFICATIONS — a browsable grid, not a ranked sequence, so
    it borrows the Stack section's card language (.card) rather
-   than the numbered Work list.
+   than the numbered Work list. Standalone page at
+   /education/certifications.
    ========================================================= */
 .certs {
   display: grid;
@@ -1314,10 +1328,10 @@ ol {
 }
 
 @media (max-width: 900px) {
-  .edu {
+  .qual {
     padding-left: 24px;
   }
-  .edu__node {
+  .qual__node {
     left: -29px;
   }
 }
@@ -1325,9 +1339,101 @@ ol {
   .certs {
     grid-template-columns: 1fr;
   }
-  .edu__school {
+  .qual__school {
     font-size: 1.12rem;
   }
+}
+
+/* =========================================================
+   EDUCATION HUB — two link-tiles at /education, routing to the
+   standalone Qualification and Certification pages.
+   ========================================================= */
+.hubtiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  max-width: 860px;
+}
+.hubtile {
+  position: relative;
+  display: block;
+  padding: 30px 26px 26px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--panel);
+  backdrop-filter: blur(16px);
+  overflow: hidden;
+  transition: transform 0.4s var(--ease), border-color 0.35s, box-shadow 0.4s;
+}
+.hubtile::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%), var(--accent-glow), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.hubtile:hover {
+  transform: translateY(-5px);
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 26px 60px -34px rgba(0, 0, 0, 1);
+}
+.hubtile:hover::before {
+  opacity: 1;
+}
+.hubtile__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.hubtile__ico {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  color: var(--accent);
+  background: rgba(0, 0, 0, 0.45);
+}
+.hubtile__ico svg {
+  width: 19px;
+  height: 19px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.hubtile__meta {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.6px;
+  color: var(--fg-dim);
+}
+.hubtile h3 {
+  font-size: 1.34rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+.hubtile__teaser {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--fg-mid);
+  margin-bottom: 22px;
+}
+.hubtile .ilink {
+  pointer-events: none;
+}
+.hubtile:hover .ilink {
+  color: var(--accent);
+}
+.hubtile:hover .ilink span {
+  transform: translate(3px, -3px);
 }
 
 /* =========================================================

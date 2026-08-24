@@ -13,8 +13,10 @@ import {
   LINKEDIN_URL,
   WHATSAPP_URL,
   aboutParagraphs,
+  certificates,
   profile,
   projects,
+  qualifications,
   stackCards,
   stats,
   timeline,
@@ -50,12 +52,23 @@ export function systemPrompt(): string {
     "## Timeline",
     timeline.map((t) => `- ${t.year} — ${t.title}: ${t.body}`).join("\n"),
     "",
+    "## Qualifications (full timeline at /education/qualification)",
+    qualifications
+      .map((q) => `- ${q.stage}, ${q.years}: ${q.school} — ${q.field} ${q.score}, ${q.location}.`)
+      .join("\n"),
+    "",
+    "## Certifications (full list at /education/certifications)",
+    certificates
+      .map((c) => `- ${c.title} — ${c.issuer}, ${c.date}.`)
+      .join("\n"),
+    "",
     "## How to answer",
     "- Keep it short: two or three sentences, no preamble. This is a chat bubble, not a document.",
     "- Speak about Ajay in the third person. You are his site assistant, not him.",
     "- Only use the facts above. If you are asked something they don't cover — his rates, his availability on a specific date, personal details — say you don't have that and point the visitor at his email.",
-    "- Never invent projects, employers, dates or technologies.",
+    "- Never invent projects, employers, dates, technologies, schools or certificates.",
     "- If someone wants to hire or contact him, give them the email and offer the WhatsApp link.",
+    "- When qualifications or certifications come up, you may point to /education/qualification or /education/certifications for the full list — these are pages on this same site.",
     "- Plain text only. No markdown headings, no bullet lists, no code fences.",
   ].join("\n");
 }
@@ -92,6 +105,18 @@ const RULES: Rule[] = [
       `A few: ${projects
         .map((p) => `${p.title} (${p.tags.slice(0, 2).join(", ")})`)
         .join(", ")}. Ask about any one of them for detail.`,
+  },
+  {
+    // Checked before "experience" below, so an unambiguous education word
+    // (degree, school, CGPA…) wins over the generic career-background rule.
+    match: /\b(degrees?|qualifications?|schools?|colleges?|universit\w*|cgpa|aggregate|bachelor'?s?)\b/i,
+    reply: () =>
+      `${qualifications[0].school} (${qualifications[0].stage}, ${qualifications[0].years}) — ${qualifications[0].score}. Full timeline at /education/qualification.`,
+  },
+  {
+    match: /\b(certificat\w*|certified)\b/i,
+    reply: () =>
+      `${certificates.length} completed, most recently ${certificates[0].title} (${certificates[0].issuer}). Full list at /education/certifications.`,
   },
   {
     match: /\b(experience|years?|background|history|career|timeline|worked)\b/i,

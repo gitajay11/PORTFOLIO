@@ -1,4 +1,4 @@
-import { education } from "@/lib/content";
+import { qualifications } from "@/lib/content";
 import Reveal from "./Reveal";
 
 const ICONS = {
@@ -16,13 +16,18 @@ const ICONS = {
   ),
 } as const;
 
-export default function Education() {
+/** /education/qualification — the school-to-degree timeline. */
+export default function Qualification() {
   return (
-    <section className="section" id="education">
+    <section className="section" id="qualification">
       <div className="wrap">
         <Reveal>
           <p className="eyebrow">
-            <span className="eyebrow__num">05</span> education
+            <span className="eyebrow__num">05</span>
+            <a href="/education" className="eyebrow__crumb">
+              education
+            </a>
+            <span className="eyebrow__sep">/</span> qualification
           </p>
         </Reveal>
         <Reveal delay={70}>
@@ -30,31 +35,30 @@ export default function Education() {
         </Reveal>
         <Reveal delay={110}>
           <p className="lead">
-            The classrooms and campuses before the codebases — newest first,
-            same as the path above it.
+            The classrooms and campuses before the codebases — newest first.
           </p>
         </Reveal>
 
-        <ol className="edu">
-          {education.map((item, i) => (
+        <ol className="qual">
+          {qualifications.map((item, i) => (
             <li key={item.years}>
               <Reveal delay={i * 60}>
-                <div className="edu__item">
-                  <span className="edu__node" aria-hidden="true">
+                <div className="qual__item">
+                  <span className="qual__node" aria-hidden="true">
                     {ICONS[item.icon]}
                   </span>
-                  <div className="edu__head">
-                    <span className="edu__stage">{item.stage}</span>
-                    <span className="edu__years">{item.years}</span>
+                  <div className="qual__head">
+                    <span className="qual__stage">{item.stage}</span>
+                    <span className="qual__years">{item.years}</span>
                   </div>
-                  <h3 className="edu__school">{item.school}</h3>
-                  <p className="edu__field">{item.field}</p>
-                  <div className="edu__meta">
-                    <span className="edu__score">
+                  <h3 className="qual__school">{item.school}</h3>
+                  <p className="qual__field">{item.field}</p>
+                  <div className="qual__meta">
+                    <span className="qual__score">
                       <b>{item.score.split(" ")[0]}</b>{" "}
                       {item.score.split(" ").slice(1).join(" ")}
                     </span>
-                    <span className="edu__loc">{item.location}</span>
+                    <span className="qual__loc">{item.location}</span>
                   </div>
                 </div>
               </Reveal>

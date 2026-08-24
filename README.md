@@ -5,20 +5,48 @@ page: the top of the document is frame 0, the bottom of the footer is frame 240.
 
 ```
 app/
-  layout.tsx        fonts, metadata
-  page.tsx          section composition
-  globals.css       tokens, layout, responsive
+  layout.tsx                          fonts, metadata, persistent chrome
+  page.tsx                            homepage section composition
+  globals.css                         tokens, layout, responsive
+  api/chat/route.ts                   the assistant's server endpoint
+  education/page.tsx                  hub — links to the two pages below
+  education/qualification/page.tsx    standalone page
+  education/certifications/page.tsx   standalone page
 components/
   ScrollVideoBackground.tsx   the fixed, scroll-scrubbed video layer
   Reveal.tsx / Counter.tsx    scroll-triggered animations
-  Nav / Hero / Interlude / About / Stack / Work / Path / Education /
-  Certifications (+ CertificateCard) / Contact / Footer
+  Nav / Hero / Interlude / About / Stack / Work / Path / Contact / Footer
+  Qualification / Certifications (+ CertificateCard) / EducationHub (+ HubTile)
 lib/
   content.ts        ALL site copy — edit here
   scrollProgress.ts one scroll listener shared by every component
 public/AK.mp4       the hero video
 legacy-static/      the original no-framework version, kept for reference
 ```
+
+## Routes
+
+| Path | Renders |
+| --- | --- |
+| `/` | The single-page scroll: hero → about → stack → work → path → contact |
+| `/education` | Hub — two link-tiles out to the pages below |
+| `/education/qualification` | The school-to-degree timeline (was inline on the homepage; moved out and renamed) |
+| `/education/certifications` | The completed-certificates grid |
+
+The persistent chrome — `ScrollVideoBackground`, `Nav`, the contact dock, the
+chat assistant — lives in `app/layout.tsx`, not `page.tsx`, so it's present on
+every route above, not just the homepage. The video re-measures the current
+page's scroll height on every navigation (`ResizeObserver` + a plain scroll
+listener), so it scrubs correctly whether the current document is the long
+homepage or a short standalone page.
+
+Internal navigation is plain `<a>` tags throughout — this project doesn't use
+`next/link` anywhere, on purpose, to keep it framework-light. That means
+moving between routes is a real page load, not a client-side transition:
+simple and totally reliable, at the cost of a full navigation instead of an
+instant swap. `Nav.tsx` reads the current path with `usePathname()` so the
+homepage's `#about`-style anchors become `/#about` when linked to from a
+different route.
 
 ## Running it
 
@@ -226,7 +254,7 @@ Still needs your real details:
 
 - Full name renders as "Ajay Kumar" (inferred from `AK.mp4`)
 - All four projects, the stats (4 / 30 / 12), and the timeline entries
-- `education` and `certificates` in `lib/content.ts` — every school, score, and certificate is a placeholder
+- `qualifications` and `certificates` in `lib/content.ts` — every school, score, and certificate is a placeholder
 - LINKEDIN_URL and WHATSAPP_NUMBER in lib/content.ts are placeholders
 - Every `href: "#"` in `projects` and `socials`
 

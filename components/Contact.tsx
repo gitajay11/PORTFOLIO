@@ -7,7 +7,7 @@ export default function Contact() {
       <div className="wrap wrap--center">
         <Reveal>
           <p className="eyebrow">
-            <span className="eyebrow__num">07</span> contact
+            <span className="eyebrow__num">05</span> contact
           </p>
         </Reveal>
         <Reveal delay={70}>

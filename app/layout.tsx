@@ -1,8 +1,18 @@
 import type { Metadata, Viewport } from "next";
+import ChatBot from "@/components/ChatBot";
+import CursorGlow from "@/components/CursorGlow";
+import Nav from "@/components/Nav";
+import ScrollVideoBackground from "@/components/ScrollVideoBackground";
+import SocialDock from "@/components/SocialDock";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Ajay K — Developer",
+  title: {
+    default: "Ajay K — Developer",
+    // Sub-pages (e.g. /education/qualification) set title: "Qualification"
+    // and this composes it into "Qualification — Ajay K".
+    template: "%s — Ajay K",
+  },
   description:
     "Developer portfolio — building fast, resilient software for the web.",
   icons: {
@@ -35,7 +45,20 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body>{children}</body>
+      <body>
+        {/* Fixed behind everything; scrubbed by whole-document scroll on
+            whichever route is mounted. Lives here, not in page.tsx, so it
+            and the rest of the chrome persist across every route. */}
+        <ScrollVideoBackground />
+        <CursorGlow />
+        <Nav />
+
+        {/* Fixed on every screen of the site */}
+        <SocialDock />
+        <ChatBot />
+
+        {children}
+      </body>
     </html>
   );
 }
