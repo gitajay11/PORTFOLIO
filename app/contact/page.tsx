@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import ContactDirect from "@/components/ContactDirect";
 import ContactForm from "@/components/ContactForm";
 import ContactHero from "@/components/ContactHero";
 import Footer from "@/components/Footer";
@@ -14,7 +13,6 @@ export default function ContactPage() {
   return (
     <main id="top" className="page">
       <ContactHero />
-      <ContactDirect />
 
       <section className="section section--alt" id="message">
         <div className="wrap wrap--center">

@@ -242,13 +242,6 @@ export const certificates = [
   },
 ];
 
-export const socials = [
-  { label: "GitHub", href: GITHUB_URL },
-  { label: "LinkedIn", href: LINKEDIN_URL },
-  { label: "WhatsApp", href: WHATSAPP_URL },
-  { label: "Résumé", href: "#" },
-];
-
 /**
  * Sections rendered as anchors on the homepage. `education` is a real
  * route instead: /education is a hub linking out to the standalone

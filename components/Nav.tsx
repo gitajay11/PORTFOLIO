@@ -97,7 +97,10 @@ export default function Nav() {
               </a>
             );
           })}
-          <a className="nav__cta" href="/contact">
+          <a
+            className={`nav__cta${pathname.startsWith("/contact") ? " is-active" : ""}`}
+            href="/contact"
+          >
             contact
           </a>
         </nav>

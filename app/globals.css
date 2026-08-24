@@ -392,10 +392,14 @@ ol {
   background: rgba(0, 0, 0, 0.4);
   transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
 }
-.nav__cta:hover {
+.nav__cta:hover,
+.nav__cta.is-active {
   border-color: var(--accent);
   background: var(--accent-glow);
   box-shadow: 0 0 20px var(--accent-glow);
+}
+.nav__cta.is-active {
+  color: var(--accent) !important;
 }
 .nav__cta::after {
   display: none !important;
@@ -1698,34 +1702,6 @@ ol {
 /* =========================================================
    CONTACT + FOOTER
    ========================================================= */
-.section--contact {
-  background: radial-gradient(700px circle at 50% 0%, rgba(74, 222, 128, 0.07), transparent 70%);
-}
-.bigmail {
-  display: inline-block;
-  font-family: var(--mono);
-  font-size: clamp(0.95rem, 3.2vw, 1.7rem);
-  letter-spacing: -0.02em;
-  color: var(--fg);
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--line);
-  text-shadow: var(--tshadow);
-  transition: color 0.3s, border-color 0.3s;
-  word-break: break-all;
-}
-.bigmail:hover {
-  color: var(--accent);
-  border-color: var(--accent);
-}
-
-.socials {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 28px;
-  margin-top: 44px;
-}
-
 /* =========================================================
    CONTACT FORM — /contact only. No backend: submitting hands off
    to a mailto: link (see ContactForm.tsx).
@@ -2000,9 +1976,6 @@ ol {
   .stats {
     grid-template-columns: minmax(0, 1fr);
     gap: 22px;
-  }
-  .socials {
-    gap: 18px;
   }
   .footer {
     justify-content: center;
