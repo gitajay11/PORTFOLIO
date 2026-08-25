@@ -10,10 +10,7 @@ export default function Hero() {
         </p>
         <h1 className="hero__title">
           <span className="line">
-            <span>{profile.firstName}</span>
-          </span>
-          <span className="line">
-            <span>{profile.lastName}</span>
+            <span>{profile.wordmark}</span>
           </span>
         </h1>
         <p className="hero__role">

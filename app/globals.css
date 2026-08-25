@@ -641,15 +641,20 @@ body.intro-lock {
 }
 
 .hero__title {
-  font-size: clamp(2.9rem, 10.5vw, 8.2rem);
+  /* One line now ("AJAYKUMAR", 9 characters) instead of two stacked lines
+     (AJAY / KUMAR, 5 characters at its longest) — scaled down from the old
+     clamp(2.9rem, 10.5vw, 8.2rem) by roughly that same 5:9 ratio so a
+     single line keeps fitting without wrapping. */
+  font-size: clamp(1.7rem, 6.2vw, 4.7rem);
   font-weight: 700;
   line-height: 0.88;
-  letter-spacing: -0.045em;
+  letter-spacing: -0.03em;
   text-transform: uppercase;
 }
 .hero__title .line {
   display: block;
   overflow: hidden;
+  white-space: nowrap;
 }
 .hero__title .line > span {
   display: block;
@@ -659,9 +664,6 @@ body.intro-lock {
   color: transparent;
   transform: translateY(105%);
   animation: riseIn 1.05s var(--ease) forwards;
-}
-.hero__title .line:nth-child(2) > span {
-  animation-delay: 0.1s;
 }
 @keyframes riseIn {
   to {
@@ -746,7 +748,10 @@ body.intro-lock {
   max-width: calc(var(--subject-left, 60vw) - clamp(20px, 5vw, 56px) - 32px);
 }
 :root[data-hero-layout="side"] .hero__title {
-  font-size: clamp(3rem, 7.4vw, 7.4rem);
+  /* Scaled down from clamp(3rem, 7.4vw, 7.4rem) by the same ~5:9 ratio as
+     the base rule — "AJAYKUMAR" replaced "KUMAR" as the longest (only)
+     line. Mirrored in JS by titlePxFor in ScrollVideoBackground.tsx. */
+  font-size: clamp(1.7rem, 4.1vw, 4.1rem);
 }
 :root[data-hero-layout="side"] .scrollhint {
   left: clamp(20px, 5vw, 56px);

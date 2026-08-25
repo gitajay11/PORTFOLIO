@@ -84,10 +84,15 @@ const MOBILE_QUERY = "(max-width: 899px)";
  * test matches what will really be rendered.
  */
 const heroPadFor = (cw: number) => Math.min(56, Math.max(20, cw * 0.05));
-const titlePxFor = (cw: number) => Math.min(118.4, Math.max(48, cw * 0.074));
+/** Mirrors the side-layout override clamp(1.7rem, 4.1vw, 4.1rem) on
+    :root[data-hero-layout="side"] .hero__title — not the base rule — since
+    that's the font-size that would actually apply if side layout won. */
+const titlePxFor = (cw: number) => Math.min(65.6, Math.max(27.2, cw * 0.041));
 const COLUMN_GAP = 32;
-/** "KUMAR" measures ~3.3em at the hero's weight and tracking. */
-const TITLE_EM_WIDTH = 3.35;
+/** "AJAYKUMAR" (now one line, not "KUMAR" alone) measures ~5.8em at the
+    hero's weight and tracking — verify against a live render if the title
+    copy or its font-size/letter-spacing ever changes again. */
+const TITLE_EM_WIDTH = 5.8;
 
 /** Matches --video-top-inset in globals.css: clamp(20px, 5.5vh, 68px). */
 const topInsetFor = (h: number) => Math.min(68, Math.max(20, h * 0.055));
