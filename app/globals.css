@@ -12,7 +12,10 @@
   /* Translucent surfaces — the video must stay visible through them. */
   --panel: rgba(9, 12, 17, 0.66);
   --panel-solid: #090c11;
-  --alt-veil: rgba(0, 0, 0, 0.4);
+  /* Slightly stronger than before (was 0.4) so alternating sections read
+     as a more distinct beat against the same fixed footage, rather than a
+     near-identical repeat of the plain sections' full-strength video. */
+  --alt-veil: rgba(0, 0, 0, 0.5);
 
   --line: rgba(255, 255, 255, 0.12);
   --line-soft: rgba(255, 255, 255, 0.07);
@@ -35,6 +38,23 @@
 
   /* Legibility helper for copy sitting directly on footage. */
   --tshadow: 0 2px 18px rgba(0, 0, 0, 0.85);
+
+  /* Small-utility-text scale (labels, captions, mono metadata, chat/nav
+     copy). Collapses eight near-duplicate sizes (10/10.5/11/11.5/12/12.5/
+     13/13.5px) that had drifted in independently across components down to
+     four steps — each merged pair differs by at most 0.5px, so nothing
+     visibly changes size, but the sheer count of distinct sizes site-wide
+     drops. Larger sizes (body copy, headings, the hero display type) still
+     have their own clamp()s; unifying those is a separate, larger pass. */
+  --fs-10: 10.5px;
+  --fs-11: 11px;
+  --fs-12: 12px;
+  --fs-13: 13px;
+
+  /* Corner-radius scale for "rounded box" chrome — pills (999px) and
+     circles (50%) are their own deliberate shapes and stay literal. */
+  --radius-sm: 8px;
+  --radius-md: 14px;
 }
 
 *,
@@ -182,16 +202,22 @@ body.intro-lock {
 }
 .intro-skip {
   position: fixed;
-  bottom: 22px;
-  right: 22px;
+  /* Aligned to the same content-edge inset the rest of the page's fixed
+     chrome uses (.hero's side layout, .chero__hud), not an arbitrary 22px —
+     so it reads as part of the page's grid instead of a stray element. */
+  bottom: 20px;
+  right: clamp(20px, 5vw, 56px);
   z-index: 10000;
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: var(--fs-12);
   color: var(--fg-dim);
   background: transparent;
   border: 1px solid var(--line);
-  padding: 8px 14px;
-  border-radius: 6px;
+  padding: 8px 16px;
+  /* Pill, matching the shape every other button on the page already uses
+     (.nav__cta, .chat__launch, .footer__top) instead of introducing a
+     fourth button shape. */
+  border-radius: 999px;
   cursor: pointer;
   transition: color 0.15s ease, border-color 0.15s ease;
 }
@@ -291,7 +317,7 @@ body.intro-lock {
   aspect-ratio: 4 / 5;
   overflow: hidden;
   border: 2px solid var(--accent);
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   background: var(--bg);
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4), 0 0 32px -6px var(--accent-glow),
     0 24px 54px -30px #000;
@@ -349,7 +375,7 @@ body.intro-lock {
 }
 .vidloader__text {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--fs-11);
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--fg-dim);
@@ -366,7 +392,7 @@ body.intro-lock {
   justify-content: center;
   gap: 18px;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--fs-11);
   letter-spacing: 1.5px;
   text-transform: uppercase;
   pointer-events: none;
@@ -483,9 +509,9 @@ body.intro-lock {
   width: 34px;
   height: 34px;
   border: 1px solid var(--line);
-  border-radius: 9px;
+  border-radius: var(--radius-sm);
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: var(--fs-12);
   font-weight: 700;
   color: var(--accent);
   background: rgba(74, 222, 128, 0.1);
@@ -516,7 +542,7 @@ body.intro-lock {
 .nav__links a {
   position: relative;
   font-family: var(--mono);
-  font-size: 13.5px;
+  font-size: var(--fs-13);
   letter-spacing: 0.4px;
   color: #c6cede;
   text-shadow: var(--tshadow);
@@ -524,7 +550,7 @@ body.intro-lock {
 }
 .nav__num {
   color: var(--accent);
-  font-size: 11px;
+  font-size: var(--fs-11);
   margin-right: 2px;
 }
 .nav__links a:hover,
@@ -570,7 +596,7 @@ body.intro-lock {
   height: 40px;
   background: rgba(0, 0, 0, 0.4);
   border: 1px solid var(--line);
-  border-radius: 9px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
 }
 .nav__burger span {
@@ -620,7 +646,7 @@ body.intro-lock {
   align-items: center;
   gap: 9px;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--fs-11);
   letter-spacing: 2.4px;
   text-transform: uppercase;
   color: var(--fg-mid);
@@ -693,14 +719,22 @@ body.intro-lock {
 
 .scrollhint {
   position: absolute;
-  bottom: 58px;
+  /* 58px let .scrollhint's vertical range (58-114px from the viewport
+     bottom) overlap .dock's (20-76px) whenever both are horizontally
+     centered — true in "stacked" hero layout (below WIDE_QUERY) while
+     .dock is still centered (above the 720px breakpoint where it moves to
+     the right edge instead), a real collision, not just a rhythm mismatch.
+     84px matches the clearance already proven safe for the same problem
+     on .hud/.chero__hud ("stay above the dock row"). Harmless in "side"
+     layout below, which sidesteps the dock horizontally instead. */
+  bottom: 84px;
   left: 50%;
   transform: translateX(-50%);
   display: grid;
   gap: 10px;
   justify-items: center;
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: var(--fs-10);
   letter-spacing: 3px;
   text-transform: uppercase;
   color: var(--fg-dim);
@@ -773,13 +807,31 @@ body.intro-lock {
    INTERLUDE — statement over bare footage
    ========================================================= */
 .interlude {
+  position: relative;
   min-height: 88vh;
   display: grid;
   place-items: center;
   text-align: center;
   padding: 0 24px;
 }
+/* Text-shadow alone isn't enough where the video frame behind this section
+   happens to be a high-contrast area (the subject's face/sunglasses) — a
+   soft dark pool centered behind the copy guarantees contrast regardless
+   of what's playing underneath, without darkening the whole section. */
+.interlude::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 65% 60% at 50% 50%,
+    rgba(0, 0, 0, 0.6) 0%,
+    rgba(0, 0, 0, 0.25) 55%,
+    transparent 85%
+  );
+  pointer-events: none;
+}
 .interlude__text {
+  position: relative;
   font-size: clamp(1.75rem, 5.4vw, 3.9rem);
   font-weight: 500;
   line-height: 1.06;
@@ -901,7 +953,7 @@ body.intro-lock {
   display: flex;
   justify-content: space-between;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--fs-11);
   letter-spacing: 1.5px;
   text-transform: uppercase;
   pointer-events: none;
@@ -928,7 +980,7 @@ body.intro-lock {
 }
 .marquee__inner span {
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: var(--fs-13);
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--fg-dim);
@@ -976,7 +1028,7 @@ body.intro-lock {
   align-items: center;
   gap: 10px;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--fs-11);
   letter-spacing: 3px;
   text-transform: uppercase;
   color: var(--fg-dim);
@@ -1076,14 +1128,14 @@ body.intro-lock {
 .terminal__name {
   margin-left: 10px;
   font-family: var(--mono);
-  font-size: 11.5px;
+  font-size: var(--fs-11);
   color: var(--fg-dim);
 }
 .terminal__body {
   padding: 18px 20px;
   overflow-x: auto;
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: var(--fs-13);
   line-height: 1.75;
   color: var(--fg-mid);
 }
@@ -1128,7 +1180,7 @@ body.intro-lock {
   display: block;
   margin-top: 7px;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--fs-11);
   letter-spacing: 1.4px;
   text-transform: uppercase;
   color: var(--fg-dim);
@@ -1150,7 +1202,7 @@ body.intro-lock {
   flex: 1;
   padding: 30px 26px;
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   background: var(--panel);
   backdrop-filter: blur(16px);
   overflow: hidden;
@@ -1209,7 +1261,7 @@ body.intro-lock {
 }
 .tags li {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--fs-11);
   color: var(--fg-mid);
   padding: 5px 11px;
   border: 1px solid var(--line);
@@ -1217,7 +1269,7 @@ body.intro-lock {
   background: rgba(0, 0, 0, 0.35);
 }
 .tags--sm li {
-  font-size: 10.5px;
+  font-size: var(--fs-10);
   padding: 4px 9px;
 }
 
@@ -1256,7 +1308,7 @@ body.intro-lock {
 }
 .project__idx {
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: var(--fs-12);
   color: var(--fg-dim);
   padding-top: 6px;
   transition: color 0.3s;
@@ -1294,7 +1346,7 @@ body.intro-lock {
   align-items: center;
   gap: 6px;
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: var(--fs-12);
   letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--fg-mid);
@@ -1354,7 +1406,7 @@ body.intro-lock {
 .tl__year {
   display: block;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--fs-11);
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--accent);
@@ -1437,7 +1489,7 @@ body.intro-lock {
 }
 .qual__stage {
   font-family: var(--mono);
-  font-size: 10.5px;
+  font-size: var(--fs-10);
   letter-spacing: 1.6px;
   text-transform: uppercase;
   color: var(--fg-dim);
@@ -1447,7 +1499,7 @@ body.intro-lock {
 }
 .qual__years {
   font-family: var(--mono);
-  font-size: 11.5px;
+  font-size: var(--fs-11);
   letter-spacing: 1px;
   color: var(--accent);
   font-variant-numeric: tabular-nums;
@@ -1477,7 +1529,7 @@ body.intro-lock {
   align-items: baseline;
   gap: 6px;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--fs-11);
   color: var(--fg-mid);
   padding: 4px 10px 4px 4px;
   border: 1px solid var(--line);
@@ -1492,11 +1544,11 @@ body.intro-lock {
   background: var(--accent-glow);
   color: var(--accent);
   font-weight: 600;
-  font-size: 10.5px;
+  font-size: var(--fs-10);
 }
 .qual__loc {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--fs-11);
   color: var(--fg-dim);
 }
 .qual__loc::before {
@@ -1549,7 +1601,7 @@ body.intro-lock {
   position: relative;
   padding: 24px 24px 22px;
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   background: var(--panel);
   backdrop-filter: blur(16px);
   overflow: hidden;
@@ -1592,7 +1644,7 @@ body.intro-lock {
   border-radius: 11px;
   background: rgba(0, 0, 0, 0.45);
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--fs-11);
   font-weight: 700;
   letter-spacing: 0.5px;
   color: var(--accent);
@@ -1602,7 +1654,7 @@ body.intro-lock {
 }
 .cert__date {
   font-family: var(--mono);
-  font-size: 10.5px;
+  font-size: var(--fs-10);
   letter-spacing: 0.6px;
   color: var(--fg-dim);
   white-space: nowrap;
@@ -1617,7 +1669,7 @@ body.intro-lock {
 }
 .cert__issuer {
   font-family: var(--mono);
-  font-size: 11.5px;
+  font-size: var(--fs-11);
   color: var(--fg-mid);
   margin-bottom: 16px;
 }
@@ -1631,7 +1683,7 @@ body.intro-lock {
 }
 .cert__id {
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: var(--fs-10);
   letter-spacing: 0.4px;
   color: var(--fg-dim);
   overflow: hidden;
@@ -1648,7 +1700,7 @@ body.intro-lock {
   height: 30px;
   margin: -4px -4px -4px 0;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   background: rgba(255, 255, 255, 0.03);
   color: var(--fg-mid);
   cursor: pointer;
@@ -1749,7 +1801,7 @@ body.intro-lock {
   display: block;
   margin-top: 4px;
   font-family: var(--mono);
-  font-size: 11.5px;
+  font-size: var(--fs-11);
   color: var(--fg-dim);
 }
 
@@ -1843,7 +1895,7 @@ body.intro-lock {
 }
 .hubtile__meta {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--fs-11);
   letter-spacing: 0.6px;
   color: var(--fg-dim);
 }
@@ -1855,7 +1907,7 @@ body.intro-lock {
 }
 .hubtile__teaser {
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: var(--fs-12);
   color: var(--fg-mid);
   margin-bottom: 22px;
 }
@@ -1897,7 +1949,7 @@ body.intro-lock {
 }
 .cform__field span {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--fs-11);
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--fg-dim);
@@ -1942,7 +1994,7 @@ body.intro-lock {
   background: var(--accent-glow);
   color: var(--fg);
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: var(--fs-13);
   letter-spacing: 0.5px;
   text-transform: uppercase;
   cursor: pointer;
@@ -1972,7 +2024,7 @@ body.intro-lock {
 }
 .cform__note {
   font-family: var(--mono);
-  font-size: 11.5px;
+  font-size: var(--fs-11);
   color: var(--fg-dim);
 }
 .cform__note--error {
@@ -1985,7 +2037,7 @@ body.intro-lock {
   margin: 8px auto 0;
   padding: 40px 32px;
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   background: var(--panel);
   backdrop-filter: blur(16px);
 }
@@ -2017,7 +2069,7 @@ body.intro-lock {
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(6px);
   font-family: var(--mono);
-  font-size: 11.5px;
+  font-size: var(--fs-11);
   letter-spacing: 1px;
   color: var(--fg-dim);
 }
@@ -2139,7 +2191,7 @@ body.intro-lock {
   /* At 20px+ body text the base 11px number read as an afterthought
      (0.55x the link size, vs. 0.81x on desktop) — sized up to match. */
   .nav__links .nav__num {
-    font-size: 13px;
+    font-size: var(--fs-13);
     letter-spacing: 1px;
     margin-right: 0;
     flex: none;
@@ -2182,7 +2234,7 @@ body.intro-lock {
   }
 
   .hud {
-    font-size: 10px;
+    font-size: var(--fs-10);
     /* stay above the dock row, not on top of it */
     bottom: 84px;
   }
@@ -2298,7 +2350,7 @@ body.intro-lock {
   background: rgba(0, 0, 0, 0.92);
   color: var(--fg);
   font-family: var(--mono);
-  font-size: 10.5px;
+  font-size: var(--fs-10);
   letter-spacing: 1px;
   white-space: nowrap;
   opacity: 0;
@@ -2336,7 +2388,7 @@ body.intro-lock {
   backdrop-filter: blur(16px) saturate(1.1);
   color: var(--fg);
   font-family: var(--mono);
-  font-size: 12.5px;
+  font-size: var(--fs-12);
   letter-spacing: 1.2px;
   text-transform: uppercase;
   cursor: pointer;
@@ -2392,7 +2444,7 @@ body.intro-lock {
 }
 .chat__head strong {
   display: block;
-  font-size: 13.5px;
+  font-size: var(--fs-13);
   font-weight: 600;
   letter-spacing: -0.01em;
 }
@@ -2400,7 +2452,7 @@ body.intro-lock {
   display: block;
   margin-top: 1px;
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: var(--fs-10);
   letter-spacing: 0.8px;
   color: var(--fg-dim);
 }
@@ -2420,7 +2472,7 @@ body.intro-lock {
   border-radius: 7px;
   background: none;
   color: var(--fg-mid);
-  font-size: 11px;
+  font-size: var(--fs-11);
   cursor: pointer;
   transition: color 0.2s, border-color 0.2s;
 }
@@ -2441,8 +2493,8 @@ body.intro-lock {
 .chat__msg {
   max-width: 86%;
   padding: 9px 12px;
-  border-radius: 13px;
-  font-size: 13.5px;
+  border-radius: var(--radius-md);
+  font-size: var(--fs-13);
   line-height: 1.55;
   white-space: pre-wrap;
   word-break: break-word;
@@ -2502,7 +2554,7 @@ body.intro-lock {
   background: rgba(255, 255, 255, 0.03);
   color: var(--fg-mid);
   font-family: var(--mono);
-  font-size: 10.5px;
+  font-size: var(--fs-10);
   cursor: pointer;
   transition: color 0.2s, border-color 0.2s;
 }
@@ -2526,7 +2578,7 @@ body.intro-lock {
   background: rgba(255, 255, 255, 0.04);
   color: var(--fg);
   font-family: var(--sans);
-  font-size: 13.5px;
+  font-size: var(--fs-13);
 }
 .chat__form input::placeholder {
   color: var(--fg-dim);
