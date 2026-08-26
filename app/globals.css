@@ -137,6 +137,16 @@ body.intro-lock {
   gap: clamp(18px, 4vw, 48px);
   padding: 0 24px;
 }
+/* Desktop stays the horizontal row above; below the site's usual mobile
+   breakpoint the three words stack vertically instead of wrapping into a
+   cramped multi-line row. */
+@media (max-width: 899px) {
+  .intro-letters {
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(10px, 3vh, 20px);
+  }
+}
 .intro-word {
   font-family: var(--mono);
   font-weight: 700;
