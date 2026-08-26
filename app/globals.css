@@ -143,7 +143,7 @@ body.intro-lock {
 @media (max-width: 899px) {
   .intro-letters {
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     gap: clamp(10px, 3vh, 20px);
   }
 }
