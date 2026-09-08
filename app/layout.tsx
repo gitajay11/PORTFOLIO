@@ -16,8 +16,13 @@ export const metadata: Metadata = {
   },
   description:
     "Developer portfolio — building fast, resilient software for the web.",
-  // No `icons` field: app/icon.png and app/apple-icon.png (the AK logo) are
-  // picked up automatically by Next's file-convention favicon handling.
+  // Points straight at the logo in public/ rather than Next's file-
+  // convention app/icon.png + app/apple-icon.png, which required a
+  // separate flattened/resized copy of the same image.
+  icons: {
+    icon: "/favicon.png",
+    apple: "/favicon.png",
+  },
 };
 
 export const viewport: Viewport = {
