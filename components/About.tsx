@@ -1,5 +1,4 @@
-import { aboutParagraphs, stats } from "@/lib/content";
-import Counter from "./Counter";
+import { aboutParagraphs } from "@/lib/content";
 import Reveal from "./Reveal";
 
 export default function About() {
@@ -63,17 +62,6 @@ export default function About() {
               <p className="lead">{p}</p>
             </Reveal>
           ))}
-
-          <Reveal>
-            <div className="stats">
-              {stats.map((s) => (
-                <div className="stat" key={s.label}>
-                  <Counter value={s.value} />
-                  <span>{s.label}</span>
-                </div>
-              ))}
-            </div>
-          </Reveal>
         </div>
       </div>
     </section>

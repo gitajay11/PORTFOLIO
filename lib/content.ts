@@ -8,13 +8,12 @@
 /**
  * Contact endpoints, shared by the floating dock and the contact section.
  *
- * GITHUB_URL and LINKEDIN_URL are real. WHATSAPP_NUMBER is still a
- * placeholder — replace it with your own. It must be in full international
- * format with no +, spaces or dashes (e.g. "919876543210" for India).
+ * All three are real. WHATSAPP_NUMBER is full international format with no
+ * +, spaces or dashes: 91 (India) + 6374972948.
  */
 export const GITHUB_URL = "https://github.com/gitajay11";
 export const LINKEDIN_URL = "https://www.linkedin.com/in/ajayak1501";
-export const WHATSAPP_NUMBER = "910000000000";
+export const WHATSAPP_NUMBER = "916374972948";
 export const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}`;
 
 export const profile = {
@@ -34,20 +33,9 @@ export const heroStages = [
   { lead: "Frontend craft.", emphasis: "discipline", tail: "Backend" },
 ] as const;
 
-export const marqueeItems = [
-  "TypeScript", "React", "Node.js", "Next.js", "PostgreSQL", "Docker",
-  "Python", "AWS", "Tailwind", "Redis", "GraphQL", "Go",
-];
-
 export const aboutParagraphs = [
   "I'm a developer who cares about the parts users never see — the query that got 40× faster, the bundle that lost 300 kB, the deploy that stopped waking people up at 3 a.m. I like turning fuzzy problems into small, boring, reliable systems.",
   "Comfortable across the stack: React and TypeScript on the front, Node and Postgres behind it, containers and CI holding it all together.",
-];
-
-export const stats = [
-  { value: 4, label: "years building" },
-  { value: 30, label: "projects shipped" },
-  { value: 12, label: "OSS contributions" },
 ];
 
 export const stackCards = [
@@ -61,13 +49,13 @@ export const stackCards = [
     icon: "</>",
     title: "Backend",
     body: "APIs with clear contracts, sane errors, and boring, predictable behaviour.",
-    tags: ["Node.js", "Express", "Python", "PostgreSQL", "Redis", "GraphQL"],
+    tags: ["Node.js", "Express", "Python", "PostgreSQL"],
   },
   {
     icon: "▲",
     title: "Infra & Tooling",
     body: "Repeatable builds, short feedback loops, deploys that are non-events.",
-    tags: ["Docker", "GitHub Actions", "AWS", "Vercel", "Nginx", "Linux"],
+    tags: ["Docker", "GitHub Actions", "AWS", "Vercel"],
   },
 ];
 

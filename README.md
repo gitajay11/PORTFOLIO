@@ -18,8 +18,7 @@ components/
                               route except /contact — see below)
   ContactHero.tsx             /contact's own bounded, local video hero
   ContactForm.tsx             the contact form, posts to Formspree
-  ContactDirect.tsx           the direct-email block under the hero
-  Reveal.tsx / Counter.tsx    scroll-triggered animations
+  Reveal.tsx                  scroll-triggered animations
   Nav / Hero / Interlude / About / Stack / Work / Path / Footer
   Qualification / Certifications (+ CertificateCard) / EducationHub (+ HubTile)
 lib/
@@ -314,11 +313,11 @@ to re-skin the site.
 
 Still needs your real details:
 
-- The stats (4 / 30 / 12) and the timeline entries in `lib/content.ts`
-- `WHATSAPP_NUMBER` in `lib/content.ts` is still a placeholder
+- The timeline entries in `lib/content.ts`
 
-The rest is real: name, email, `GITHUB_URL`, `LINKEDIN_URL`, `projects`
-(Forgebyte), `qualifications`, and `certificates` — see below.
+Everything else is real: name, email, `GITHUB_URL`, `LINKEDIN_URL`,
+`WHATSAPP_NUMBER`, `projects` (Forgebyte), `qualifications`, and
+`certificates` — see below.
 
 ### Certificates are real
 

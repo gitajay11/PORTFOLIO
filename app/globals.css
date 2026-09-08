@@ -960,39 +960,6 @@ body.intro-lock {
 }
 
 /* =========================================================
-   MARQUEE
-   ========================================================= */
-.marquee {
-  position: relative;
-  overflow: hidden;
-  border-top: 1px solid var(--line-soft);
-  border-bottom: 1px solid var(--line-soft);
-  background: rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(6px);
-  padding: 16px 0;
-  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
-}
-.marquee__inner {
-  display: flex;
-  width: max-content;
-  animation: slide 34s linear infinite;
-}
-.marquee__inner span {
-  font-family: var(--mono);
-  font-size: var(--fs-13);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--fg-dim);
-  white-space: nowrap;
-}
-@keyframes slide {
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-/* =========================================================
    SECTIONS
    ========================================================= */
 .section {
@@ -1153,37 +1120,6 @@ body.intro-lock {
 }
 .c-str {
   color: var(--accent);
-}
-
-.stats {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
-  margin-top: 34px;
-  padding-top: 30px;
-  border-top: 1px solid var(--line-soft);
-}
-.stat b {
-  display: block;
-  font-family: var(--mono);
-  font-size: clamp(1.7rem, 3.6vw, 2.5rem);
-  font-weight: 700;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-  text-shadow: var(--tshadow);
-}
-.stat b::after {
-  content: "+";
-  color: var(--accent);
-}
-.stat span {
-  display: block;
-  margin-top: 7px;
-  font-family: var(--mono);
-  font-size: var(--fs-11);
-  letter-spacing: 1.4px;
-  text-transform: uppercase;
-  color: var(--fg-dim);
 }
 
 /* =========================================================
@@ -2258,10 +2194,6 @@ body.intro-lock {
 }
 
 @media (max-width: 560px) {
-  .stats {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 22px;
-  }
   .footer {
     justify-content: center;
     text-align: center;

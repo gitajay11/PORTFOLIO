@@ -18,7 +18,6 @@ import {
   projects,
   qualifications,
   stackCards,
-  stats,
   timeline,
 } from "./content";
 
@@ -37,9 +36,6 @@ export function systemPrompt(): string {
     `WhatsApp: ${WHATSAPP_URL}`,
     "",
     aboutParagraphs.join("\n\n"),
-    "",
-    "## Numbers",
-    stats.map((s) => `- ${s.value}+ ${s.label}`).join("\n"),
     "",
     "## Stack",
     stackCards
@@ -121,9 +117,7 @@ const RULES: Rule[] = [
   {
     match: /\b(experience|years?|background|history|career|timeline|worked)\b/i,
     reply: () =>
-      `${timeline[0].year} — ${timeline[0].title}. ${
-        stats[0].value
-      }+ ${stats[0].label}, ${stats[1].value}+ ${stats[1].label}.`,
+      `${timeline[0].year} — ${timeline[0].title}. Full path at /#path.`,
   },
   {
     match: /\b(github|code|repos?|repositor\w*|source|open ?source)\b/i,
