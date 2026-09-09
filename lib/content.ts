@@ -49,7 +49,7 @@ export const stackCards = [
     icon: "</>",
     title: "Backend",
     body: "APIs with clear contracts, sane errors, and boring, predictable behaviour.",
-    tags: ["Node.js", "Express", "Python", "PostgreSQL"],
+    tags: ["Node.js", "Express", "Python", "PostgreSQL", ".NET"],
   },
   {
     icon: "▲",

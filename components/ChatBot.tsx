@@ -113,11 +113,11 @@ export default function ChatBot() {
   return (
     <div className="chat" ref={panelRef}>
       {open && (
-        <div className="chat__panel" role="dialog" aria-label="Ask about Ajay">
+        <div className="chat__panel" role="dialog" aria-label="Ask about AJAYKUMAR">
           <header className="chat__head">
             <span className="chat__dot" aria-hidden="true" />
             <div>
-              <strong>Ask about {profile.shortName}</strong>
+              <strong>Ask about {profile.wordmark}</strong>
               <small>Answers come from this site</small>
             </div>
             <button
@@ -180,7 +180,7 @@ export default function ChatBot() {
         className={`chat__launch${open ? " is-open" : ""}`}
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        aria-label={open ? "Close assistant" : "Ask about Ajay"}
+        aria-label={open ? "Close assistant" : "Ask about AJAYKUMAR"}
       >
         {open ? (
           <span className="chat__launchicon">&#10005;</span>

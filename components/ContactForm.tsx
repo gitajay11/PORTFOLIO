@@ -103,7 +103,7 @@ export default function ContactForm() {
           />
         </label>
         <label className="cform__field">
-          <span>Phone (optional)</span>
+          <span>Phone</span>
           <input
             type="tel"
             value={phone}
@@ -135,7 +135,7 @@ export default function ContactForm() {
         <p className={`cform__note${status === "error" ? " cform__note--error" : ""}`}>
           {status === "error"
             ? errorDetail || `Something went wrong — email him directly at ${profile.email} instead.`
-            : `Goes straight to ${profile.shortName}.`}
+            : "Goes straight to AJAYKUMAR A."}
         </p>
       </div>
     </form>
