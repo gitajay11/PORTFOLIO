@@ -25,7 +25,7 @@ export const MAX_QUESTION_LENGTH = 800;
 
 export function systemPrompt(): string {
   return [
-    `You are the assistant on ${profile.shortName}'s developer portfolio site.`,
+    `You are the assistant on ${profile.wordmark}'s developer portfolio site.`,
     `You answer visitors' questions about him — recruiters, clients and other developers.`,
     "",
     "## About him",
@@ -79,7 +79,7 @@ const RULES: Rule[] = [
   {
     match: /\b(hi|hey|hello|yo|greetings)\b/i,
     reply: () =>
-      `Hi. I can tell you about ${profile.shortName}'s work, stack, projects or how to reach him. What do you need?`,
+      `Hi. I can tell you about ${profile.wordmark}'s work, stack, projects or how to reach him. What do you need?`,
   },
   {
     // "work with" is deliberately absent — "what does he work with?" is a

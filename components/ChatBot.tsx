@@ -8,7 +8,7 @@ type Message = { role: "user" | "assistant"; content: string };
 
 const GREETING: Message = {
   role: "assistant",
-  content: `Hi — I'm ${profile.shortName}'s assistant. Ask me about his stack, his projects, or how to reach him.`,
+  content: `Hi — I'm ${profile.wordmark}'s assistant. Ask me about his stack, his projects, or how to reach him.`,
 };
 
 const SUGGESTIONS = [

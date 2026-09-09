@@ -19,7 +19,6 @@ export const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}`;
 export const profile = {
   firstName: "AJAY",
   lastName: "KUMAR",
-  shortName: "Ajay K",
   initials: "AK",
   wordmark: "AJAYKUMAR",
   role: "developer",
