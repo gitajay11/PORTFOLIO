@@ -54,7 +54,7 @@ export const stackCards = [
     icon: "▲",
     title: "Infra & Tooling",
     body: "Repeatable builds, short feedback loops, deploys that are non-events.",
-    tags: ["Docker", "GitHub Actions", "AWS", "Vercel"],
+    tags: ["Docker", "GitHub Actions", "AWS", "Vercel", "Neon"],
   },
 ];
 
@@ -70,6 +70,12 @@ export const projects: {
     body: "A freelance web application development studio — full-stack product builds, APIs & backend systems, MVP sprints, and ongoing support for founders and teams who need to move fast without cutting corners.",
     tags: ["Next.js", "TypeScript", "Tailwind CSS", "PostgreSQL"],
     live: "https://www.forgebyte.online/",
+  },
+  {
+    title: "Sri Cauvery Electronics",
+    body: "An e-commerce storefront for a Madurai electronics and bulk-gifting retailer — product catalog, cart and checkout, COD and digital payments, serving 12,000+ families across Tamil Nadu.",
+    tags: ["Next.js", "E-commerce"],
+    live: "https://www.sricauveryelectronics.shop/",
   },
 ];
 
