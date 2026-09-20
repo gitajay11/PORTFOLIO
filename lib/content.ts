@@ -87,6 +87,13 @@ export const projects: {
     status: "demo",
     live: "https://cafecaffeine.vercel.app/",
   },
+  {
+    title: "Clear Dental",
+    body: "A landing page for a dental clinic — smile gallery, implant and treatment sections, a services grid, dentist profiles, a five-step patient journey, testimonials, FAQ and an appointment-request form.",
+    tags: ["React", "Vite"],
+    status: "demo",
+    live: "https://cleardental.vercel.app/",
+  },
 ];
 
 export const timeline = [
