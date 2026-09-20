@@ -23,6 +23,7 @@ export default function Work() {
                   <h3 className="project__title">{p.title}</h3>
                   <p className="project__desc">{p.body}</p>
                   <ul className="tags tags--sm">
+                    {p.status && <li className="tags__status">{p.status}</li>}
                     {p.tags.map((t) => (
                       <li key={t}>{t}</li>
                     ))}

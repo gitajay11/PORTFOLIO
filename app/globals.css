@@ -1208,6 +1208,14 @@ body.intro-lock {
   font-size: var(--fs-10);
   padding: 4px 9px;
 }
+/* Project status ("under testing", "demo") — styled apart from the tech tags. */
+.tags li.tags__status {
+  color: var(--accent);
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  border-color: rgba(74, 222, 128, 0.45);
+  background: rgba(74, 222, 128, 0.08);
+}
 
 /* =========================================================
    PROJECTS

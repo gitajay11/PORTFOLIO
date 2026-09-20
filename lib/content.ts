@@ -62,6 +62,8 @@ export const projects: {
   title: string;
   body: string;
   tags: string[];
+  /** Shown as an accent chip ahead of the tech tags — e.g. "under testing", "demo". */
+  status?: string;
   live: string;
   code?: string;
 }[] = [
@@ -75,7 +77,15 @@ export const projects: {
     title: "Sri Cauvery Electronics",
     body: "An e-commerce storefront for a Madurai electronics and bulk-gifting retailer — product catalog, cart and checkout, COD and digital payments, serving 12,000+ families across Tamil Nadu.",
     tags: ["Next.js", "E-commerce"],
+    status: "under testing",
     live: "https://www.sricauveryelectronics.shop/",
+  },
+  {
+    title: "Cafe Caffeine",
+    body: "A landing page for a specialty café — story, tabbed menu with per-item nutrition, a bean-to-cup process timeline, gallery, opening hours and a table-reservation form.",
+    tags: ["React", "Vite"],
+    status: "demo",
+    live: "https://cafecaffeine.vercel.app/",
   },
 ];
 
