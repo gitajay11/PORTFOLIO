@@ -94,6 +94,13 @@ export const projects: {
     status: "demo",
     live: "https://cleardental.vercel.app/",
   },
+  {
+    title: "Élaré Beauty",
+    body: "An installable storefront for a makeup label — shade-led product edits, quick view and quick add, bag and wishlist, accounts with order tracking, loyalty points and coupons.",
+    tags: ["React", "Vite", "Tailwind CSS", "E-commerce"],
+    status: "under forging",
+    live: "https://www.elarebeauty.store/",
+  },
 ];
 
 export const timeline = [
