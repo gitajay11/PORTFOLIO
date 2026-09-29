@@ -41,22 +41,22 @@ export const metadata: Metadata = {
     // logo sits dead centre so WhatsApp's square crop can't clip it. Kept
     // well under WhatsApp's ~300 kB ceiling, past which it shows no image.
     //
-    // Baseline truecolor JPEG, not PNG: WhatsApp's thumbnailer silently
-    // skips indexed-palette and progressive images, which is what killed
-    // the preview the first time round.
+    // Truecolor (non-indexed, non-interlaced) PNG. The indexed-palette
+    // variant rendered on WhatsApp Desktop but not on WhatsApp mobile;
+    // this matches forgebyte.online's working image in kind.
     images: [
       {
-        url: "/og.jpg",
+        url: "/og.png",
         width: 1200,
         height: 630,
-        type: "image/jpeg",
+        type: "image/png",
         alt: "AJAYKUMAR — developer",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    images: ["/og.jpg"],
+    images: ["/og.png"],
   },
 };
 
