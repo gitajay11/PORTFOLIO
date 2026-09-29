@@ -7,21 +7,52 @@ import ScrollVideoBackground from "@/components/ScrollVideoBackground";
 import SocialDock from "@/components/SocialDock";
 import "./globals.css";
 
+const SITE_URL = "https://www.ajaykumarak.online";
+const DESCRIPTION =
+  "Developer portfolio — building fast, resilient software for the web.";
+
 export const metadata: Metadata = {
+  // Absolute base for og:image and og:url. WhatsApp, Telegram and the rest
+  // reject relative image paths, so without this the preview shows no logo.
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "AJAYKUMAR",
     // Sub-pages (e.g. /education/qualification) set title: "Qualification"
     // and this composes it into "Qualification — AJAYKUMAR".
     template: "%s — AJAYKUMAR",
   },
-  description:
-    "Developer portfolio — building fast, resilient software for the web.",
+  description: DESCRIPTION,
   // Points straight at the logo in public/ rather than Next's file-
   // convention app/icon.png + app/apple-icon.png, which required a
   // separate flattened/resized copy of the same image.
   icons: {
     icon: "/favicon.png",
     apple: "/favicon.png",
+  },
+  // og:/twitter: titles and descriptions are deliberately left unset here so
+  // each route's own `title` and `description` flow into them — sharing
+  // /contact previews as "Contact — AJAYKUMAR", not the site default.
+  openGraph: {
+    type: "website",
+    siteName: "AJAYKUMAR",
+    url: SITE_URL,
+    locale: "en_US",
+    // 1200x630 keeps the large card on Facebook/Telegram/LinkedIn/X, and the
+    // logo sits dead centre so WhatsApp's square crop can't clip it. Kept
+    // well under WhatsApp's ~300 kB ceiling, past which it shows no image.
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        type: "image/png",
+        alt: "AJAYKUMAR — developer",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["/og.png"],
   },
 };
 
