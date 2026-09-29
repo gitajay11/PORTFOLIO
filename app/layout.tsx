@@ -40,19 +40,23 @@ export const metadata: Metadata = {
     // 1200x630 keeps the large card on Facebook/Telegram/LinkedIn/X, and the
     // logo sits dead centre so WhatsApp's square crop can't clip it. Kept
     // well under WhatsApp's ~300 kB ceiling, past which it shows no image.
+    //
+    // Baseline truecolor JPEG, not PNG: WhatsApp's thumbnailer silently
+    // skips indexed-palette and progressive images, which is what killed
+    // the preview the first time round.
     images: [
       {
-        url: "/og.png",
+        url: "/og.jpg",
         width: 1200,
         height: 630,
-        type: "image/png",
+        type: "image/jpeg",
         alt: "AJAYKUMAR — developer",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    images: ["/og.png"],
+    images: ["/og.jpg"],
   },
 };
 
