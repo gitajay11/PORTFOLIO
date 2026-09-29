@@ -37,26 +37,14 @@ export const metadata: Metadata = {
     siteName: "AJAYKUMAR",
     url: SITE_URL,
     locale: "en_US",
-    // 1200x630 keeps the large card on Facebook/Telegram/LinkedIn/X, and the
-    // logo sits dead centre so WhatsApp's square crop can't clip it. Kept
-    // well under WhatsApp's ~300 kB ceiling, past which it shows no image.
-    //
-    // Truecolor (non-indexed, non-interlaced) PNG. The indexed-palette
-    // variant rendered on WhatsApp Desktop but not on WhatsApp mobile;
-    // this matches forgebyte.online's working image in kind.
-    images: [
-      {
-        url: "/og.png",
-        width: 1200,
-        height: 630,
-        type: "image/png",
-        alt: "AJAYKUMAR — developer",
-      },
-    ],
+    // No `images` here: app/opengraph-image.png is picked up by Next's file
+    // convention, which emits og:image with its own hashed URL plus type and
+    // dimensions. Hand-rolling /og.png previewed on WhatsApp Desktop but not
+    // on mobile; this is the exact arrangement forgebyte.online previews
+    // correctly from on both.
   },
   twitter: {
     card: "summary_large_image",
-    images: ["/og.png"],
   },
 };
 
