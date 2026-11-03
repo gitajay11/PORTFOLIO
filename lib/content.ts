@@ -101,6 +101,13 @@ export const projects: {
     status: "under forging",
     live: "https://www.elarebeauty.store/",
   },
+  {
+    title: "AAZHI",
+    body: "A catalog site for a Coimbatore tile and surfaces showroom — twelve collections from vitrified to natural stone, featured surfaces with finish and size, browsing by room, and a calculator that turns room dimensions into area, wastage and boxes to order.",
+    tags: ["Next.js", "Tailwind CSS", "AWS Amplify"],
+    status: "demo",
+    live: "https://www.aazhi.forgebyte.online/",
+  },
 ];
 
 export const timeline = [
