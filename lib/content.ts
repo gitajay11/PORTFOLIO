@@ -138,10 +138,22 @@ export const timeline = [
  * `timeline`. `icon` picks the timeline-node glyph in Qualification.tsx:
  * "cap" for degrees, "book" for school stages. Lives at
  * /education/qualification.
+ *
+ * `image` is the scan shown in the lightbox; omit it and the card simply
+ * renders without a view button.
  */
-export const qualifications = [
+export const qualifications: {
+  icon: "cap" | "book";
+  stage: string;
+  years: string;
+  school: string;
+  field: string;
+  score: string;
+  location: string;
+  image?: string;
+}[] = [
   {
-    icon: "cap" as const,
+    icon: "cap",
     stage: "Bachelor's",
     years: "2021 – 2025",
     school: "B.Tech, Computer Science & Engineering",
@@ -149,10 +161,9 @@ export const qualifications = [
       "Vels University — specialization in Artificial Intelligence and Machine Learning.",
     score: "CGPA 8.28 / 10",
     location: "Chennai, Tamil Nadu",
-    image: "/qualifications/bachelors-marksheet.jpg",
   },
   {
-    icon: "book" as const,
+    icon: "book",
     stage: "Higher Secondary",
     years: "2021",
     school: "Class XII",
@@ -162,7 +173,7 @@ export const qualifications = [
     image: "/qualifications/class-xii-marksheet.jpg",
   },
   {
-    icon: "book" as const,
+    icon: "book",
     stage: "Secondary",
     years: "2019",
     school: "Class X",
