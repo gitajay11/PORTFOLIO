@@ -147,7 +147,7 @@ export const qualifications = [
     school: "B.Tech, Computer Science & Engineering",
     field:
       "Vels University — specialization in Artificial Intelligence and Machine Learning.",
-    score: "CGPA 8.25 / 10",
+    score: "CGPA 8.28 / 10",
     location: "Chennai, Tamil Nadu",
     image: "/qualifications/bachelors-marksheet.jpg",
   },
