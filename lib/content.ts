@@ -108,6 +108,13 @@ export const projects: {
     status: "demo",
     live: "https://www.aazhi.forgebyte.online/",
   },
+  {
+    title: "Interiors",
+    body: "A site for an interior design studio — a scrolled walkthrough of five finished rooms, selected projects with area and style, a five-stage process, and a real-time 3D studio where visitors repaint walls, swap floors and furniture, orbit the room and send the result in with a consultation request.",
+    tags: ["Next.js", "Three.js", "Tailwind CSS"],
+    status: "demo",
+    live: "https://interiors.forgebyte.online/",
+  },
 ];
 
 export const timeline = [
